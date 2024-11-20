@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Quicksand:wght@300..700&display=swap');
+    </style>
+    <meta charset='utf-8'>
+    <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+    <title>Cadastro de Campings</title>
+    <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' media='screen' href='/cadastro_camping/cadastrocamp.css'>
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    
+    <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/logins/login-7/assets/css/login-7.css">
+    
+</head>
+<body>
+    <div class="form-container">
+        <div class="form-content">
+            <h1 style="color: white;">Cadastro de Camping</h1>
+            <form id="formCadastro" novalidate>
+    
+                <!-- Tipo de cadastro -->
+                <div class="input-field">
+                    <p for="tipoCadastro">Tipo de Cadastro</p>
+                    <select id="tipoCadastro" name="tipoCadastro" onchange="mostrarCamposEspecificos()">
+                        <option value="pessoa">Pessoa</option>
+                        <option value="empresa">Empresa</option>
+                    </select>
+                    
+                </div>
+    
+                 <!-- Campos específicos para "Pessoa" -->
+                <div id="pessoaCampos" class="hidden">
+                <div class="input-field">
+                    <p for="nomeCamping">Nome do Camping</p>
+                    <input type="text" placeholder="Digite o nome do camping" id="nomeCamping" name="nomeCamping" required>
+                </div>
+
+                <div class="input-field">
+                    <p for="nome">Nome Completo</p>
+                    <input type="text" placeholder="Nome de quem está cadastrando o camping" id="nome" name="nome" required>
+                </div>
+                
+    
+                <div class="input-field">
+                    <p for="email">Email</p>
+                    <input type="email" placeholder="Digite seu e-mail" id="email" name="email" required>
+                </div>
+    
+                <div class="input-field">
+                    <p for="telefone">Telefone</p>
+                    <input type="tel" placeholder="Digite o telefone do camping" id="telefone" name="telefone" required>
+                </div>
+    
+                <div class="input-field">
+                    <p for="endereco">Endereço</p>
+                    <input type="text" placeholder="Digite o endereço do camping" id="endereco" name="endereco" required>
+                </div>
+    
+                    <div class="input-field">
+                        <p for="comunicacao"> Disponibilidade de comunicação: </p>
+                        <input type="text" placeholder="Possui telefone público ou sinal de celular" id="comunicacao" name="comunicação">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="recursosHidricos"> Recursos Hídricos: </p>
+                        <input type="text" placeholder="Possui lago, represa, rio ou cachoeira" id="recursosHidricos" name="recursosHídricos">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="sanitariosBasicos"> Banheiros: </p>
+                        <input type="text" placeholder=" Possui sanitários com lavatório" id="sanitariosBasicos" name="sanitáriosBasicos">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="alimentacao"> Alimentação: </p>
+                        <input type="text" placeholder="Lanchonete ou quiosque de lanches e bebidas" id="alimentacao" name="alimentação">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="veiculosRecreacao"> Apoio para veículos de recreação (Trailers e motor homes): </p>
+                        <input type="text" id="veiculosRecreacao" placeholder="Disponibiliza ponto de esgoto para RVs e módulos com água, tomadas e descarte de água" name="veiculosRecreacao">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="trilhas"> Trilhas ou caminhadas: </p>
+                        <input type="text" placeholder="Possui perto trilhas ou caminhadas" id="trilhas" name="trilhas">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="siteInternet"> Site na Internet </p>
+                        <input type="text" placeholder="Site do camping" id="siteInternet" name="siteInternet">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="redeSocial"> Endereço de Rede Social </p>
+                        <input type="text" placeholder="Possui instagram ou facebook" id="redeSocial" name="redeSocial">
+                    </div>
+
+                    <div class="input-field">
+                        <label for="imageUpload">Selecione uma imagem do Camping:</label><br>
+                        <input type="file" id="imageUpload" name="image" accept="image/*" required><br><br>
+                    </div>
+
+                    <div class="input-field">
+                        <p>Avalie sua experiência de camping</p>
+                          
+                        <label for="rating">Classificação (1 a 5):</label>
+                        <select id="rating" name="rating">
+                          <option value="1">1 - Péssimo ⭐</option>
+                          <option value="2">2 - Ruim ⭐⭐</option>
+                          <option value="3">3 - Regular ⭐⭐⭐</option>
+                          <option value="4">4 - Bom ⭐⭐⭐⭐</option>
+                          <option value="5">5 - Excelente ⭐⭐⭐⭐⭐</option>
+                        </select><br><br>
+                          
+                        <label for="comments">Comentário:</label><br>
+                        <textarea id="comments" name="comments" rows="4" cols="50" placeholder="Deixe sua opinião sobre o camping..."></textarea><br><br>   
+                    </div>
+                </div>
+    
+                <!-- Campos específicos para "Empresa" -->
+                <div id="empresaCampos" class="hidden">
+                    <div class="input-field">
+                        <p for="nomeCamping">Nome do Camping</p>
+                        <input type="text" placeholder="Digite o nome do camping" id="nomeCamping" name="nomeCamping" required>
+                    </div>
+                    
+                    <div class="input-field">
+                        <p for="nomeFantasia">Nome Fantasia</p>
+                        <input type="text" placeholder="Digite o nome fantasia" id="nomeFantasia" name="nomeFantasia">
+                    </div>
+    
+                    <div class="input-field">
+                        <p for="cnpj">CNPJ</p>
+                        <input type="text" placeholder="Digite o CNPJ" id="cnpj" name="cnpj">
+                    </div>
+    
+                    <div class="input-field">
+                        <p for="responsavel">Nome do Responsável</p>
+                        <input type="text" placeholder="Digite o nome do responsável" id="responsavel" name="responsavel">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="email">Email</p>
+                        <input type="email" placeholder="Digite e-mail do camping" id="email" name="email" required>
+                    </div>
+
+                    <div class="input-field">
+                        <p for="telefone">Telefone</p>
+                        <input type="tel" placeholder="Digite o telefone do camping" id="telefone" name="telefone" required>
+                    </div>
+        
+                    <div class="input-field">
+                        <p for="endereco">Endereço</p>
+                        <input type="text" placeholder="Digite o endereço do camping" id="endereco" name="endereco" required>
+                    </div>
+    
+                    <div class="input-field">
+                        <p for="areaAtuacao">Área de Atuação</p>
+                        <input type="text" id="areaAtuacao" name="areaAtuacao">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="coordenadasGPS"> Coordenadas de GPS:</p>
+                        <input type="text" placeholder="Digite a localização do seu camping" id="coordenadasGPS" name="coordenadasGPS">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="equipamentosAceitacao"> Equipamentos de aceitação: </p>
+                        <input type="text" placeholder="Aceita barracas, trailers ou motor homes" id="equipamentosAceitacao" name="equipamentosAceitacao">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="equipamentos"> Equipamentos: </p>
+                        <input type="text" placeholder="Possui chalé, cabanas ou suítes" id="equipamentos" name="equipamentos">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="animaisEstimacoes">Animais de estimações: </p>
+                        <input type="text" placeholder="É permitido animais de estimações" id="animaisEstimacoes" name="animaisEstimacoes">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="praia"> Praia: </p>
+                        <input type="text" placeholder="Perto tem litoral, lacustre ou represa" id="praia" name="praia">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="calendarioFuncionamento"> Calendario de funcionamento</p>
+                        <input type="text" placeholder="Funciona apenas mediante reserva, funciona o ano todo ou só em temporada de verão" id="calendarioFuncionamento" name="calendarioFuncionamento">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="regrasInternas"> Regras: </p>
+                        <input type="text" placeholder="Regras do camping" id="regrasInternas" name="regrasInternas">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="eletricidade"> Disponibilidade de eletricidade: </p>
+                        <input type="text" placeholder="Tomadas 110V e 220V para equipamentos, restrições de uso, taxas extras para equipamentos específicos e medição individual de consumo de energia" id="eletricidade" name="eletricidade">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="acessibilidade"> Acessibilidade para caderantes: </p>
+                        <input type="text" placeholder="O camping oferece infraestrutura adequada, incluindo acessos e banheiros acessíveis, com a devida responsabilidade" id="acessibilidade" name="acessibilidade">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="comunicacao"> Disponibilidade de comunicação: </p>
+                        <input type="text" placeholder="Possui telefone público ou sinal de celular" id="comunicacao" name="comunicacao">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="veiculosRecreacao"> Apoio para veículos de recreação (Trailers e motor homes): </p>
+                        <input type="text" id="veiculosRecreacao" placeholder="Disponibiliza ponto de esgoto para RVs e módulos com água, tomadas e descarte de água" name="veiculosRecreacao">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="trilhas"> Trilhas ou caminhadas: </p>
+                        <input type="text" placeholder="Possui perto trilhas ou caminhadas" id="trilhas" name="trilhas">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="siteInternet"> Site na Internet </p>
+                        <input type="text" placeholder="Site do camping" id="siteInternet" name="siteInternet">
+                    </div>
+
+                    <div class="input-field">
+                        <p for="redeSocial"> Endereço de Rede Social </p>
+                        <input type="text" placeholder="Possui instagram ou facebook" id="redeSocial" name="redeSocial">
+                    </div>
+
+                    <!--
+                     <div class="input-field">
+                        <p>Avaliação dos usuario</p>
+                          
+                        <label for="rating">Classificação (1 a 5):</label>
+                        <select id="rating" name="rating">
+                          <option value="1">1 - Péssimo ⭐</option>
+                          <option value="2">2 - Ruim ⭐⭐</option>
+                          <option value="3">3 - Regular ⭐⭐⭐</option>
+                          <option value="4">4 - Bom ⭐⭐⭐⭐</option>
+                          <option value="5">5 - Excelente ⭐⭐⭐⭐⭐</option>
+                        </select><br><br>
+                          
+                        <label for="comments">Comentário:</label><br>
+                        <textarea id="comments" name="comments" rows="4" cols="50" placeholder="Deixe sua opinião sobre o camping..."></textarea><br><br>   
+                    </div>
+
+                    -->
+                   
+                </div>
+    
+                <!-- Botão de submit -->
+                <div class="form-actions">
+                    <button type="submit">Cadastrar</button>
+                </div>
+        
+            </form>    
+        </div>   
+        
+    </div>
+    
+    <script src='/cadastro_camping/cadastrocamp.js'></script>
+</body>
+</html>

@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poiret+One&display=swap');
+    </style>
+    <meta charset="UTF-8">
+    <title>Cadastro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poiret+One&display=swap" rel="stylesheet">
+    <link href="./cadastro.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/logins/login-7/assets/css/login-7.css">
+</head>
+
+<body>
+    <div class="contact-form">
+        <img alt="" class="avatar" src="/images/logoprojeto.png">
+        <h2>Cadastro</h2>
+        <div id="msgError"></div>
+        <div id="msgSuccess"></div>
+        <form action="/login/login.html" id="cadastroForm">
+            <p>Nome Completo</p><input id="nome" placeholder="Digite seu nome completo" type="text">
+            <p>Nome de Usuário</p><input id="nomedeusuario" placeholder="@nomedeusuario" type="text">
+            <p>E-mail</p><input id="email" placeholder="Digite seu e-mail" type="email">
+            <p>Senha</p><input id="senha" placeholder="Digite uma senha" type="password">
+            <input class="custom-btn btn-4 botaoLogin" type="submit" value="Criar minha conta">
+        </form>
+        <div id="msgError" style="display: none; color: red;"></div>
+        <div id="msgSuccess" style="display: none; color: green;"></div>
+    </div><br><br>
+    <div class="row">
+        <div class="col-12"></div>
+        <div class="d-flex gap-2 gap-sm-3 justify-content-center"></div>
+
+<script src="/cadastro/cadastro.js"></script>
+</body>
+
+</html>

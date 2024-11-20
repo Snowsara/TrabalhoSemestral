@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Quicksand:wght@300..700&display=swap');
+
+
+.poiret-one-regular {
+    font-family: "Poiret One", sans-serif !important;
+    font-weight: 400;
+    font-style: normal;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poiret One', sans-serif;
+    font-weight: 400;
+}
+
+body:before {
+    content: '';
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    background-image: url(/images/background.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    -webkit-background-size: cover;
+    background-size: cover;
+    -webkit-filter: blur(3px);
+    -moz-filter: blur(3px);
+    filter: blur(3px);
+}
+  
+.contact-form {
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 600px;
+    padding: 80px 40px;
+    background: rgba(0, 0, 0, 0.75);
+}
+  
+.avatar {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow: hidden;
+    top: calc(-120px/2);
+    left: 175px;
+}
+  
+.contact-form h2 {
+    margin: 0;
+    padding: 0 0 20px;
+    color: #fff;
+    text-align: center;
+    text-transform: uppercase;
+}
+  
+.contact-form p {
+    margin: 0;
+    padding: 0;
+    font-weight: bold;
+    color: #fff;
+}
+  
+.contact-form input {
+    width: 100%;
+    margin-bottom: 20px;
+}
+  
+.contact-form input[type=email],
+.contact-form input[type=text],
+.contact-form input[type=password] {
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: #fff;
+    font-size: 16px;
+}
+  
+  
+/*.contact-form input[type=submit] {
+  	height: 30px;
+  	color: #fff;
+  	font-size: 15px;
+  	background: red;
+  	cursor: pointer;
+  	border-radius: 25px;
+  	border: none;
+  	outline: none;
+  	margin-top: 15%;
+}*/
+  
+.contact-form a {
+    color: #fff;
+    font-size: 14px;
+    font-weight: bold;
+    text-decoration: none;  
+}
+  
+input[type=checkbox] {
+    width: 20%;
+}
+  
+  
+.custom-btn {
+    width: 130px;
+    height: 40px;
+    color: #fff;
+    border-radius: 5px;
+    padding: 10px 25px;
+    font-family: 'Poiret One', sans-serif;
+    font-weight: 500;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    display: inline-block;
+    box-shadow: inset 2px 2px 2px 0px rgba(18, 34, 8, 0.5),
+        7px 7px 20px 0px rgba(0, 0, 0, .1),
+        4px 4px 5px 0px rgba(0, 0, 0, .1);
+    outline: none;
+}
+  
+.btn-4 {
+    width: 130px;
+    height: 50px;
+    line-height: 42px;
+    font-size: 20px;
+    padding: 0;
+    border: none;
+    background: #33480e;
+    background: linear-gradient(0deg, #33480e 0%,#33480e 50%);
+}
+  
+.btn-4:hover {
+    color: #33480e;
+    background: #e0e5ec;
+    box-shadow: none;
+  }

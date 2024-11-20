@@ -1,0 +1,134 @@
+@import url('https://fonts.googleapis.com/css2?family=Poiret+One&family=Quicksand:wght@300..700&display=swap');
+
+
+
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poiret One', sans-serif;
+    font-weight: 400;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    background-image: url('/images/background.jpg');
+    background-size: cover;      
+    background-position: center; 
+    background-attachment: fixed;
+    font-weight: bold; /* Torna o texto em negrito */
+    
+   
+}
+
+
+.form-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+
+}
+
+.form-content {
+    width: 700px; /* largura do formulário*/
+    padding: 20px;
+    background-color: rgba(17, 16, 16, 0.562); /* Fundo preto com transparência */
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+
+.form-content h1 {
+    text-align: center;
+    font-size: 40px;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+.checkbox-container{
+   display: grid;
+   grid-template-columns: auto 1fr; 
+   align-items: center;
+
+}
+
+
+
+.input-field {
+    margin-bottom: 15px;
+    background: transparent;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold; 
+    
+}
+
+p {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold; 
+}
+
+.form-content input,
+.form-content select {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+
+option {
+    border: none;
+    border-bottom: 1px solid #fff;
+    background: transparent;
+    outline: none;
+    height: 40px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold; 
+}
+  
+
+.form-actions {
+    text-align: center;
+    font-weight: bold;
+    border-radius: 4px; 
+}
+
+button {
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold; 
+}
+
+button:hover {
+    background-color: #45a049;
+    border-radius: 4px;
+}
+
+
+
+
+/*.form-check-input{
+    border-radius: 4px;
+}*/
+
+.hidden {
+    display: none;
+    border-radius: 10px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 500px;
+    height: 900px;
+    padding: 80px 40px;
+    background: rgba(0, 0, 0, 0.575);
+    
+}
