@@ -1,3 +1,12 @@
+document.getElementById('tipoCadastro').addEventListener('change', function() {
+    if (this.value === 'empresa') {
+        document.getElementById('cadastroForm').style.display = 'none';
+        document.getElementById('cadastroEmpresa').style.display = 'block';
+    } else {
+        document.getElementById('cadastroForm').style.display = 'block';
+        document.getElementById('cadastroEmpresa').style.display = 'none';
+    }
+});
 
 let nome = document.querySelector('#nome')
 let validNome = false
@@ -79,7 +88,7 @@ let cadastroForm = document.querySelector('#cadastroForm');
         listaUser.push({
             nomeCad: nome.value,
             userCad: nomedeusuario.value,
-            emailCad: email.values,
+            emailCad: email.value,
             senhaCad: senha.value
         });
 
@@ -96,6 +105,51 @@ let cadastroForm = document.querySelector('#cadastroForm');
         msgError.setAttribute('style', 'display: block; color: red;');
         msgError.innerHTML = '<strong>Preencha todos os campos corretamente antes de cadastrar</strong>';
         msgSuccess.style.display = 'none';
+    }
+});
+
+
+document.getElementById('cadastroEmpresa').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const nomeEmpresa = document.getElementById('nomeEmpresa').value;
+    const cnpj = document.getElementById('cnpj').value;
+    const emailEmpresa = document.getElementById('emailEmpresa').value;
+    const senhaEmpresa = document.getElementById('senhaEmpresa').value;
+
+    let validEmail = false;
+    let validSenha = false;
+    let msgError = document.querySelector('#msgError');
+    
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!emailRegex.test(emailEmpresa)) {
+        msgError.innerHTML = 'Email inválido. Por favor, insira um email válido.';
+        msgError.style.display = 'block';
+    } else {
+        validEmail = true;
+    }
+
+    // Validação da senha
+    if (senhaEmpresa.length < 6) {
+        msgError.innerHTML = 'A senha deve ter pelo menos 6 caracteres.';
+        msgError.style.display = 'block';
+    } else {
+        validSenha = true;
+    }
+
+    if (validEmail && validSenha) {
+        let listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]');
+        listaUser.push({
+        tipo: 'empresa',
+        nomeEmpresa: nomeEmpresa,
+        cnpj: cnpj,
+        email: emailEmpresa,
+        senha: senhaEmpresa
+        });
+
+        localStorage.setItem('listaUser', JSON.stringify(listaUser));
+        alert("Cadastro da empresa realizado com sucesso!");
+        window.location.href = '/login/login.html';
     }
 });
 

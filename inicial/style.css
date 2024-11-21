@@ -12,14 +12,6 @@ navbar {
     border-bottom: 3%;
 }
 
-#modalSair{
-    position: absolute; 
-    background-color: rgb(243, 243, 243);
-     border: 1px solid #bbbaba; 
-     padding: 10px; 
-     top: 50px; 
-     left: 50px;
-}
 .avatar {
     width: 60px;
     height: 60px;

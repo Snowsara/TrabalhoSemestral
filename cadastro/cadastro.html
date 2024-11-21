@@ -21,12 +21,23 @@
         <h2>Cadastro</h2>
         <div id="msgError"></div>
         <div id="msgSuccess"></div>
+        <select class="custom-btn" id="tipoCadastro">
+            <option value="usuario">Usuário</option>
+            <option value="empresa">Empresa</option>
+        </select>
         <form action="/login/login.html" id="cadastroForm">
             <p>Nome Completo</p><input id="nome" placeholder="Digite seu nome completo" type="text">
             <p>Nome de Usuário</p><input id="nomedeusuario" placeholder="@nomedeusuario" type="text">
             <p>E-mail</p><input id="email" placeholder="Digite seu e-mail" type="email">
             <p>Senha</p><input id="senha" placeholder="Digite uma senha" type="password">
             <input class="custom-btn btn-4 botaoLogin" type="submit" value="Criar minha conta">
+        </form>
+        <form action="/login/login.html" id="cadastroEmpresa" style="display: none;">
+            <p>Nome da Empresa</p><input id="nomeEmpresa" placeholder="Digite o nome da sua empresa" type="text">
+            <p>CNPJ</p><input id="cnpj" placeholder="CNPJ" type="text">
+            <p>E-mail</p><input id="emailEmpresa" placeholder="Digite o e-mail da sua empresa" type="email">
+            <p>Senha</p><input id="senhaEmpresa" placeholder="Digite uma senha" type="password">
+            <input class="custom-btn btn-4 botaoLogin" type="submit" value="Cadastrar Empresa">
         </form>
         <div id="msgError" style="display: none; color: red;"></div>
         <div id="msgSuccess" style="display: none; color: green;"></div>

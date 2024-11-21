@@ -18,15 +18,14 @@
   <main>
     <div class="navbar navbar-expand-lg" id="menuTotal">
       <div class="container-fluid">
-        <div id="usuarioLogado" class="d-flex align-items-center">
-          <!-- Ícone de pessoa -->
-          <i id="iconePessoa" class="bi bi-person-circle" style="font-size: 40px; cursor: pointer;"></i>
-          <span id="nomeUsuario" class="ms-2">Olá, <span id="nome"></span></span>
-        </div>
-        <!-- Modal de Sair -->
-        <div id="modalSair" style="display:none;">
-        <button id="btnSair" class="btn btn-danger">Sair</button>
-        </div>
+        <div class="container">
+          <div>Logado como <span id="usernameElement">Anônimo</span></div>
+          <div class="buttons">
+              <a href="/cadastro/cadastro.html" class="btn red">Cadastrar Usuário</a>
+              <a href="/login/login.html" class="btn blue">Login</a>
+              <a class="btn" id="sairBtn">Sair</a>
+          </div>
+      </div>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
           aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>

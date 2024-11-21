@@ -47,13 +47,19 @@ document.addEventListener("DOMContentLoaded", function() {
 
       
     if (validEmail && validSenha) {
+      const listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]')
+      const usuario = listaUser.find(user => user.emailCad === email.value)
+       
+      if (usuario && usuario.senhaCad === senha.value){
+        const loggedUser = {
+          userCad: usuario.userCad,
+          emailCad: email.value,
+          senhaCad: senha.value
+        }
 
-        listaUser.push({
-            emailCad: email.values,
-            senhaCad: senha.value
-        });
 
-        localStorage.setItem('listaUser', JSON.stringify(listaUser));
+
+        localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
 
         msgSuccess.setAttribute('style', 'display: block');
         msgSuccess.innerHTML = '<strong>Logando...</strong>';
@@ -62,12 +68,13 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             window.location.href = '/inicial/index.html';
         }, 3000);
-    } else {
+    
+      } else {
         msgError.setAttribute('style', 'display: block; color: red;');
-        msgError.innerHTML = '<strong>Preencha todos os campos corretamente antes de cadastrar</strong>';
+        msgError.innerHTML = '<strong>Preencha todos os campos corretamente antes de longar</strong>';
         msgSuccess.style.display = 'none';
+      }
     }
-
   })
 });
 
