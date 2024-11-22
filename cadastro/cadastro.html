@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 
 <head>
     <style>
@@ -17,10 +17,12 @@
 
 <body>
     <div class="contact-form">
-        <img alt="" class="avatar" src="/images/logoprojeto.png">
+        <img alt="" class="avatar">
         <h2>Cadastro</h2>
         <div id="msgError"></div>
         <div id="msgSuccess"></div>
+        <div id="msgError2"></div>
+        <div id="msgSuccess2"></div>
         <select class="custom-btn" id="tipoCadastro">
             <option value="usuario">Usuário</option>
             <option value="empresa">Empresa</option>
@@ -32,6 +34,9 @@
             <p>Senha</p><input id="senha" placeholder="Digite uma senha" type="password">
             <input class="custom-btn btn-4 botaoLogin" type="submit" value="Criar minha conta">
         </form>
+        <div id="msgError" style="display: none; color: red;"></div>
+        <div id="msgSuccess" style="display: none; color: green;"></div>
+
         <form action="/login/login.html" id="cadastroEmpresa" style="display: none;">
             <p>Nome da Empresa</p><input id="nomeEmpresa" placeholder="Digite o nome da sua empresa" type="text">
             <p>CNPJ</p><input id="cnpj" placeholder="CNPJ" type="text">
@@ -39,8 +44,8 @@
             <p>Senha</p><input id="senhaEmpresa" placeholder="Digite uma senha" type="password">
             <input class="custom-btn btn-4 botaoLogin" type="submit" value="Cadastrar Empresa">
         </form>
-        <div id="msgError" style="display: none; color: red;"></div>
-        <div id="msgSuccess" style="display: none; color: green;"></div>
+        <div id="msgError2" style="display: none; color: red;"></div>
+        <div id="msgSuccess2" style="display: none; color: green;"></div>
     </div><br><br>
     <div class="row">
         <div class="col-12"></div>

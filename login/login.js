@@ -2,11 +2,17 @@
 document.addEventListener("DOMContentLoaded", function() {
   const email = document.getElementById("email");
   const senha = document.getElementById("senha");
+  const loginForm = document.querySelector('#loginForm');
 
   let validEmail = false
   let validSenha = false
   let msgError = document.querySelector('#msgError')
   let msgSuccess = document.querySelector('#msgSuccess')
+
+  if(!loginForm){
+    console.log("Formulário de login não encontrado!");
+    return;
+  }
 
   if(email){
     email.addEventListener('keyup', () => {
@@ -38,35 +44,36 @@ document.addEventListener("DOMContentLoaded", function() {
     });
   }
 
-
-  let listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]');
-  let loginForm = document.querySelector('#loginForm');
     
   loginForm.addEventListener('submit', function(event) {
     event.preventDefault(); 
 
       
     if (validEmail && validSenha) {
-      const listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]')
+      let listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]')
       const usuario = listaUser.find(user => user.emailCad === email.value)
        
       if (usuario && usuario.senhaCad === senha.value){
         const loggedUser = {
           userCad: usuario.userCad,
           emailCad: email.value,
-          senhaCad: senha.value
+          senhaCad: senha.value,
+          tipo: usuario.tipo
         }
 
 
-
+        console.log("Usuário encontrado, armazenando no localStorage...");
         localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
 
         msgSuccess.setAttribute('style', 'display: block');
         msgSuccess.innerHTML = '<strong>Logando...</strong>';
         msgError.style.display = 'none';
 
+        console.log("Aguardando 3 segundos para redirecionamento...");
+
         setTimeout(() => {
-            window.location.href = '/inicial/index.html';
+          console.log("Redirecionar para a página inicial...");
+            window.location.href = '/inical/index.html';
         }, 3000);
     
       } else {
