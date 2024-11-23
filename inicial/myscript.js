@@ -15,10 +15,10 @@ document.addEventListener("DOMContentLoaded", function() {
             // Verificar se o usuário logado é empresa ou um usuário normal
             if (loggedUser.tipo === 'empresa') {
                if (usernameElement) usernameElement.textContent = loggedUser.nomeEmpresa;
-               if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'none';
+               if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'block';
             } else {
                if (usernameElement) usernameElement.textContent = loggedUser.userCad || 'Anônimo';
-               if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'block';
+               if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'none';
             }
         } else {
             // Caso não tenha usuário logado

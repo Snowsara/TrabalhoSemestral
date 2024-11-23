@@ -2,17 +2,17 @@
 document.addEventListener("DOMContentLoaded", function() {
   const email = document.getElementById("email");
   const senha = document.getElementById("senha");
-  const loginForm = document.querySelector('#loginForm');
+  const loginForm = document.getElementById("loginForm");
 
   let validEmail = false
   let validSenha = false
   let msgError = document.querySelector('#msgError')
   let msgSuccess = document.querySelector('#msgSuccess')
 
-  if(!loginForm){
+  /*if(!loginForm){
     console.log("Formulário de login não encontrado!");
     return;
-  }
+  }*/
 
   if(email){
     email.addEventListener('keyup', () => {
@@ -51,37 +51,45 @@ document.addEventListener("DOMContentLoaded", function() {
       
     if (validEmail && validSenha) {
       let listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]')
-      const usuario = listaUser.find(user => user.emailCad === email.value)
-       
-      if (usuario && usuario.senhaCad === senha.value){
-        const loggedUser = {
-          userCad: usuario.userCad,
-          emailCad: email.value,
-          senhaCad: senha.value,
-          tipo: usuario.tipo
+      
+      const usuario = listaUser.find(user => user.emailCad === email.value || user.emailEmpresa === email.value);
+
+      if (usuario) {
+
+        if ((usuario.senhaCad && usuario.senhaCad === senha.value) || (usuario.senhaEmpresa && usuario.senhaEmpresa === senha.value)){
+          const loggedUser = {
+            tipo: usuario.tipo,
+            userCad: usuario.userCad || null,
+            nomeEmpresa: usuario.nomeEmpresa || null,
+            email: email.value,
+            senha: senha.value
+          }
+
+          localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
+
+          // Exibir mensagem de sucesso
+          msgSuccess.setAttribute('style', 'display: block');
+          msgSuccess.innerHTML = '<strong>Logando...</strong>';
+          msgError.style.display = 'none';
+
+          // Redirecionar após 3 segundos
+          setTimeout(() => {
+            window.location.href = '/inicial/index.html';
+          }, 3600);
+
+        } else {
+          // Senha incorreta
+          msgError.setAttribute('style', 'display: block; color: red;');
+          msgError.innerHTML = '<strong>Email ou senha incorretos!</strong>';
+          msgSuccess.style.display = 'none';
         }
 
-
-        console.log("Usuário encontrado, armazenando no localStorage...");
-        localStorage.setItem('loggedUser', JSON.stringify(loggedUser));
-
-        msgSuccess.setAttribute('style', 'display: block');
-        msgSuccess.innerHTML = '<strong>Logando...</strong>';
-        msgError.style.display = 'none';
-
-        console.log("Aguardando 3 segundos para redirecionamento...");
-
-        setTimeout(() => {
-          console.log("Redirecionar para a página inicial...");
-            window.location.href = '/inical/index.html';
-        }, 3000);
-    
       } else {
+        // Caso o usuário não exista
         msgError.setAttribute('style', 'display: block; color: red;');
-        msgError.innerHTML = '<strong>Preencha todos os campos corretamente antes de longar</strong>';
+        msgError.innerHTML = '<strong>Email ou senha incorretos!</strong>';
         msgSuccess.style.display = 'none';
       }
     }
-  })
+  });
 });
-

@@ -96,6 +96,7 @@ let cadastroForm = document.querySelector('#cadastroForm');
     if (validNome && validNomedeusuario  && validEmail && validSenha) {
 
         listaUser.push({
+            tipo: 'usuário',
             nomeCad: nome.value,
             userCad: nomedeusuario.value,
             emailCad: email.value,
