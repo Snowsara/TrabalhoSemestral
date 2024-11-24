@@ -1,19 +1,121 @@
-.campings-container {
-    max-width: 600px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+
+body {
+    background-color: #f8f9fa;
+    background-image: url('/images/background.jpg');
+    background-size: cover; /* Ajusta a imagem de fundo para cobrir toda a área */
+    background-position: center; /* Centraliza a imagem */
+    
 }
+
 
 h1 {
     text-align: center;
-    margin-bottom: 20px;
+    color: #000000;
+    margin-bottom: 40px;
+
+}
+
+/* Estilo para o botão */
+.back-button {
+    background-color: #28a745; /* Cor verde */
+    color: white; /* Cor do texto */
+    border: none; /* Remove borda */
+    padding: 10px 20px; /* Espaçamento interno */
+    font-size: 16px; /* Tamanho da fonte */
+    cursor: pointer; /* Aparece como uma mãozinha ao passar o mouse */
+    border-radius: 5px; /* Bordas arredondadas */
+    transition: background-color 0.3s ease; /* Transição suave para a cor de fundo */
+}
+
+/* Estilo para o botão ao passar o mouse */
+.back-button:hover {
+    background-color: #218838; /* Cor verde mais escuro ao passar o mouse */
+}
+
+.camping-card {
+    margin-bottom: 30px;
+}
+
+.card-img-top {
+    height: 200px;
+    object-fit: cover;
+}
+
+.card-body h5 {
+    color: #036638;
+}
+
+.card-body p {
+    color: #6c757d;
+}
+
+.card-body .btn {
+    background-color: #036638;
+    color: white;
+    margin-top: 10px;
+}
+
+
+
+.btn:hover {
+    background-color: #036638;
+}
+
+.camping-card img {
+    width: 100%;      /* Faz com que a imagem se ajuste ao tamanho do card */
+    height: auto;     /* Mantém a proporção da imagem */
+    max-height: 200px; /* Define uma altura máxima para que as imagens não fiquem grandes demais */
+    object-fit: cover; /* Corta a imagem se for necessário para ajustá-la ao espaço */
+    border-radius: 5px; /* Ajusta o arredondamento das bordas da imagem, caso deseje */
 }
 
 .camping-item {
-    padding: 10px;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ccc;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+
+/* Ajusta a imagem dentro da container */
+.image-container {
+    display: flex;
+    justify-content: center; /* Centraliza as imagens */
+    gap: 10px;
+    margin-top: 10px; /* Espaço acima das imagens */
+}
+
+/* Limita o tamanho das imagens */
+.image-container img {
+    width: 400px;  /* Limita o tamanho da imagem */
+    height: 400px; 
+    object-fit: cover; /* Faz a imagem cobrir o espaço sem distorcer */
+    border-radius: 8px;
+}
+
+/* Estilo do botão excluir */
+button.excluir {
+    background-color: #036638; /* Cor de fundo verde */
+    color: white; /* Cor do texto branca */
+    border: 2px solid #036638; /* Bordas verdes */
+}
+
+button.excluir:focus {
+    outline: none; /* Remove a borda padrão ao focar */
+    border: 2px solid #036638; /* Mantém a borda verde ao focar */
+}
+
+button.detalhes{
+    background-color: #036638; /* Cor de fundo verde */
+    color: white; /* Cor do texto branca */
+    border: 2px solid #036638; /* Bordas verdes */
+}
+
+button.detalhes:focus {
+    outline: none; /* Remove a borda padrão ao focar */
+    border: 2px solid #036638; /* Mantém a borda verde ao focar */
 }
