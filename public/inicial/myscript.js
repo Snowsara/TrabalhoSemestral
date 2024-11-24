@@ -34,7 +34,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (sairBtn){
         sairBtn.addEventListener("click", function() {
             localStorage.removeItem("loggedUser"); // Remove o usuário logado
-            window.location.href = "/login/login.html"; // Redireciona para a página de login
+            window.location.href = "/inicial/index.html"; // Redireciona para a página de login
         });
     }
    

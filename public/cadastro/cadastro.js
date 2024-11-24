@@ -111,7 +111,7 @@ let cadastroForm = document.querySelector('#cadastroForm');
 
         setTimeout(() => {
             window.location.href = '/login/login.html';
-        }, 3000);
+        }, 3003);
     } else {
         msgError.setAttribute('style', 'display: block; color: red;');
         msgError.innerHTML = '<strong>Preencha todos os campos corretamente antes de cadastrar</strong>';
@@ -243,7 +243,7 @@ let cadastroEmpresa = document.querySelector('#cadastroEmpresa');
 
         setTimeout(() => {
             window.location.href = '/login/login.html';
-        }, 3000);
+        }, 3003);
     } else {
         msgError2.setAttribute('style', 'display: block; color: red;');
         msgError2.innerHTML = '<strong>Preencha todos os campos corretamente antes de cadastrar</strong>';
