@@ -5,37 +5,45 @@ document.addEventListener("DOMContentLoaded", function() {
     const sairBtn = document.getElementById("sairBtn");
     const menuCadastrarCamping = document.getElementById("menuCadastrarCamping");
 
-    // Verificar se há um usuário logado no localStorage
-    const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    // Função para verificar se o usuário está logado
+    const verificarUsuarioLogado = async () => {
+        try {
+            const response = await fetch('/api/verificar_usuario', {
+                method: 'GET',
+                credentials: 'include', // Usando cookies para verificar sessão
+            });
+            const data = await response.json();
 
-    // Função para atualizar a visibilidade do botão "Cadastrar Camping"
-    const atualizarVisibilidadeMenu = () => {
-        if (loggedUser) {
-                      
-            // Verificar se o usuário logado é empresa ou um usuário normal
-            if (loggedUser.tipo === 'empresa') {
-               if (usernameElement) usernameElement.textContent = loggedUser.nomeEmpresa;
-               if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'block';
+            if (data.success && data.user) {
+                // Atualizar nome de usuário e visibilidade do menu
+                if (usernameElement) {
+                    usernameElement.textContent = data.user.tipo === 'empresa' ? data.user.nomeEmpresa : data.user.userCad || 'Anônimo';
+                }
+                if (menuCadastrarCamping) {
+                    menuCadastrarCamping.style.display = data.user.tipo === 'empresa' ? 'block' : 'none';
+                }
             } else {
-               if (usernameElement) usernameElement.textContent = loggedUser.userCad || 'Anônimo';
-               if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'none';
+                // Caso o usuário não esteja logado
+                if (usernameElement) usernameElement.textContent = "Anônimo";
+                if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'none';
             }
-        } else {
-            // Caso não tenha usuário logado
-           if (usernameElement) usernameElement.textContent = "Anônimo";
-           if (menuCadastrarCamping) menuCadastrarCamping.style.display = 'none'; // Ocultar o menu como padrão
+        } catch (error) {
+            console.error('Erro ao verificar usuário', error);
         }
-    }
+    };
 
-    // Chama a função para configurar a visibilidade corretamente ao carregar a página
-    atualizarVisibilidadeMenu();
+    // Verificar o usuário ao carregar a página
+    verificarUsuarioLogado();
 
     // Botão de sair
-    if (sairBtn){
-        sairBtn.addEventListener("click", function() {
-            localStorage.removeItem("loggedUser"); // Remove o usuário logado
-            window.location.href = "/inicial/index.html"; // Redireciona para a página de login
+    if (sairBtn) {
+        sairBtn.addEventListener("click", async function() {
+            try {
+                await fetch('/api/sair', { method: 'POST', credentials: 'include' });
+                window.location.href = "/inicial/index.html"; // Redireciona para a página de login
+            } catch (error) {
+                console.error('Erro ao sair', error);
+            }
         });
     }
-   
 });

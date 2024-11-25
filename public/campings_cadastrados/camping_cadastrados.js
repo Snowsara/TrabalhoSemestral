@@ -1,66 +1,55 @@
 
-// Função para carregar os campings da API
+let campings = [];
 async function carregarCampings() {
     try {
-        // Faz a requisição para obter os campings
-        const response = await fetch('http://localhost:3003/campings'); // Corrige a URL
-        if (!response.ok) {
-            throw new Error('Erro ao buscar campings.');
-        }
-
-        const campings = await response.json();
-        const campingList = document.getElementById('campingList');
-
-        // Limpa a lista antes de adicionar novos elementos
-        campingList.innerHTML = '';
-
-        // Caso não haja campings cadastrados
-        if (campings.length === 0) {
-            campingList.innerHTML = '<p>Nenhum camping cadastrado.</p>';
-            return;
-        }
-
-        // Gera o card para cada camping recebido da API
-        campings.forEach(camping => {
-            const campingItem = criarCardCamping(camping);
-            campingList.appendChild(campingItem);
-        });
-
+      const response = await fetch('http://localhost:3003/campings');
+      if (!response.ok) {
+        throw new Error('Erro ao buscar campings.');
+      }
+  
+      const campings = await response.json();
+      const campingList = document.getElementById('campingList');
+  
+      campingList.innerHTML = ''; // Limpa a lista antes de adicionar novos campings
+  
+      if (campings.length === 0) {
+        campingList.innerHTML = '<p>Nenhum camping cadastrado.</p>';
+        return;
+      }
+  
+      campings.forEach(camping => {
+        const cardCamping = criarCardCamping(camping); // Criando o card para cada camping
+        campingList.appendChild(cardCamping); // Adicionando o card à lista
+      });
     } catch (error) {
-        console.error('Erro ao carregar os campings:', error);
-        const campingList = document.getElementById('campingList');
-        campingList.innerHTML = '<p>Erro ao carregar campings.</p>';
+      console.error('Erro ao carregar os campings:', error);
+      const campingList = document.getElementById('campingList');
+      campingList.innerHTML = '<p>Erro ao carregar os campings.</p>';
     }
-}
+  }
+  
+
+
 
 function renderCampings() {
     const campings = JSON.parse(localStorage.getItem('campings')) || [];
     const campingListElement = document.getElementById('campingList');
     
-    // Limpa a lista antes de renderizar
-    campingListElement.innerHTML = ''; 
+    if (!campingListElement) {
+        console.error('Elemento de lista de campings não encontrado!');
+        return;
+    }
+    
+    campingListElement.innerHTML = ''; // Limpa a lista antes de renderizar
+    
+    if (campings.length === 0) {
+        campingListElement.innerHTML = '<p>Nenhum camping cadastrado.</p>';
+        return;
+    }
 
     campings.forEach(camping => {
-        // Criação de um card (div) para o camping, similar ao que você usaria no Bootstrap ou no layout da página
-        const card = document.createElement('div');
-        card.className = 'col-md-4'; // Classes de estilo, como no Bootstrap
-
-        // Monta o conteúdo do card
-        card.innerHTML = `
-            <div class="card camping-card">
-                <div class="card-body">
-                    <h5 class="card-title">${camping.nomeCamping}</h5>
-                    <p class="card-text">${camping.descricao || 'Sem descrição disponível.'}</p>
-                    <button class="btn btn-danger excluir" data-id="${camping.id}">Excluir</button>
-                </div>
-            </div>
-        `;
-
-        // Adiciona o evento de exclusão para o botão
-        card.querySelector('.excluir').addEventListener('click', excluirCamping);
-
-        // Adiciona o card à lista de campings
-        campingListElement.appendChild(card);
+        const cardCamping = criarCardCamping(camping);
+        campingListElement.appendChild(cardCamping);
     });
 }
 
@@ -71,34 +60,66 @@ function criarCardCamping(camping) {
     col.className = 'col-md-4';
     col.id = `camping-${camping.id}`; // Atribui um ID único para o card do camping
 
-    // Criação do card com o nome e a imagem
-    const card = `
-        <div class="card camping-card">
-            <div class="card-body">
-                <h5 class="card-title">${camping.nomeCamping}</h5>
-                <!-- Aqui vamos inserir a imagem adicional -->
-                ${camping.images && camping.images.length > 0 ? `
-                    <div class="image-container">
-                        ${camping.images.map(imageUrl => `
-                            <img src="http://localhost:3003${imageUrl}" alt="Imagem de ${camping.nomeCamping}" />
-                        `).join('')}
-                    </div>
-                ` : ''}
-                <p class="card-text">${camping.descricao || 'Sem descrição disponível.'}</p>
-                <button class="btn btn-primary detalhes" onclick="mostrarDetalhesCamping(${JSON.stringify(camping).replace(/"/g, '&quot;')})">Mais detalhes</button>
-                <button class="btn btn-danger excluir" onclick="excluirCamping(${camping.id})">Excluir</button>        
-            </div>
-        </div>
-    `;
+    const card = document.createElement('div');
+    card.classList.add('card', 'camping-card');
 
-    col.innerHTML = card;
+    const cardBody = document.createElement('div');
+    cardBody.classList.add('card-body');
+
+    const title = document.createElement('h5');
+    title.classList.add('card-title');
+    title.textContent = camping.nomeCamping;
+
+    cardBody.appendChild(title);
+
+    // Adiciona as imagens, se existirem
+    if (camping.imagens && camping.imagens.length > 0) {
+        const imageContainer = document.createElement('div');
+        imageContainer.classList.add('image-container');
+        camping.imagens.forEach(imageUrl => {
+            const img = document.createElement('img');
+            img.src = `http://localhost:3003${imageUrl}`;  // Corrija a URL conforme necessário
+            img.alt = `Imagem de ${camping.nomeCamping}`;
+            img.style.width = '150px';
+            img.style.margin = '10px';
+            img.style.border = '1px solid #ccc';
+            img.style.borderRadius = '5px';
+            imageContainer.appendChild(img);
+        });
+        cardBody.appendChild(imageContainer);
+    }
+
+    const description = document.createElement('p');
+    description.classList.add('card-text');
+    description.textContent = camping.descricao || 'Sem descrição disponível.';
+
+    cardBody.appendChild(description);
+
+    const detalhesButton = document.createElement('button');
+    detalhesButton.classList.add('btn', 'btn-primary');
+    detalhesButton.textContent = 'Mais detalhes';
+    detalhesButton.onclick = () => mostrarDetalhesCamping(camping);
+
+    cardBody.appendChild(detalhesButton);
+
+    const excluirButton = document.createElement('button');
+    excluirButton.classList.add('btn', 'btn-danger');
+    excluirButton.textContent = 'Excluir';
+    excluirButton.onclick = () => excluirCamping(camping.id);
+
+    cardBody.appendChild(excluirButton);
+
+    card.appendChild(cardBody);
+    col.appendChild(card);
 
     return col;
 }
 
+
+
 // Função para excluir um camping
 function excluirCamping(id) {
-    fetch(`http://localhost:3003/campings/${id}`, {
+    fetch(`http://localhost:3003/campings${id}`, {
         method: 'DELETE',
     })
     .then(response => response.json())
@@ -181,45 +202,41 @@ function mostrarDetalhesCamping(camping) {
     modal.show();
 }
 
-// Função para salvar um camping
 async function salvarCamping(event) {
-    event.preventDefault(); // Impede o envio do formulário
-
-    const nomeCamping = document.getElementById('nomeCamping').value;
-    if (!nomeCamping) {
-        alert('Nome do camping é obrigatório.');
-        return;
-    }
-
-    const camping = { nomeCamping };
+    event.preventDefault();
+    const form = document.getElementById('formCadastro');
+    const formData = new FormData(form); // Mantendo o uso de FormData, pois tem arquivos
 
     try {
         const response = await fetch('http://localhost:3003/campings', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(camping),
+            body: formData, // Envia o FormData diretamente
         });
 
         if (!response.ok) {
-            throw new Error('Erro ao salvar o camping');
+            throw new Error('Erro ao cadastrar o camping');
         }
 
-        const novoCamping = await response.json();
+        const result = await response.json();
         alert('Camping cadastrado com sucesso!');
-        carregarCampings(); // Atualiza a lista de campings após salvar
-
+        window.location.href = 'campings_cadastrados.html'; // Redireciona após salvar
     } catch (error) {
         console.error('Erro ao salvar o camping:', error);
-        alert('Erro ao salvar o camping');
+        alert('Erro ao cadastrar camping.');
     }
 }
 
 
+
+localStorage.setItem('campings', JSON.stringify(campings));
+
+
+
 // Carrega a lista de campings ao carregar a página
 window.onload = function() {
-    carregarCampings(); // Carrega os campings do servidor e renderiza
+    carregarCampings(); // Carrega os campings do servidor
+    renderCampings();   // Renderiza os campings do localStorage
 };
+
 
 

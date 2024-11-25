@@ -21,8 +21,7 @@
     <div class="form-container">
         <div class="form-content">
             <h1 style="color: white;">Cadastro de Camping</h1>
-            <form id="formCadastro" novalidate>
-    
+            <form id="formCadastro" action="/campings/uploadImagem" method="post" enctype="multipart/form-data">    
                 <!-- Campos específicos para "Empresa" -->
                 <div id="empresaCampos">
                     <div class="input-field">
@@ -139,7 +138,10 @@
                         <label for="imageUpload">Selecione uma imagem do Camping:</label><br>
                         <input type="file" id="imageUpload" name="imagens" multiple accept="image/*"><br><br>
                         <div id="imagePreview"></div>
-                    </div>                    
+                        
+                    </div>
+                    
+                    <div id="mensagemErro"></div>
 
                     <!--
                      <div class="input-field">

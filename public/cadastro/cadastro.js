@@ -1,3 +1,4 @@
+
 document.getElementById('tipoCadastro').addEventListener('change', function() {
     limparMensagemDeErro();
     if (this.value === 'empresa') {
@@ -9,21 +10,16 @@ document.getElementById('tipoCadastro').addEventListener('change', function() {
     }
 });
 
-
-let nome = document.querySelector('#nome')
-let validNome = false
-
-let nomedeusuario = document.querySelector('#nomedeusuario')
-let validNomedeusuario = false
-
-let email = document.querySelector('#email')
-let validEmail = false
-
-let senha = document.querySelector('#senha')
-let validSenha = false
-
-let msgError = document.querySelector('#msgError')
-let msgSuccess = document.querySelector('#msgSuccess')
+let nome = document.querySelector('#nome');
+let validNome = false;
+let nomedeusuario = document.querySelector('#nomedeusuario');
+let validNomedeusuario = false;
+let email = document.querySelector('#email');
+let validEmail = false;
+let senha = document.querySelector('#senha');
+let validSenha = false;
+let msgError = document.querySelector('#msgError');
+let msgSuccess = document.querySelector('#msgSuccess');
 
 const mostrarErro1 = (mensagem1) => {
     msgError.style.display = 'block';
@@ -31,7 +27,6 @@ const mostrarErro1 = (mensagem1) => {
     msgError.innerHTML = `<strong>${mensagem1}</strong>`;
 };
 
-// Limpando mensagem de erro
 const limparErro1 = () => {
     msgError.style.display = 'none';
     msgError.innerHTML = '';
@@ -39,13 +34,13 @@ const limparErro1 = () => {
 
 nome.addEventListener('keyup', () => {
     if (nome.value.length <= 2) {
-      nome.setAttribute('style', 'color: red');
-      validNome = false;
-      mostrarErro1 ('Nome *Insira no mínimo 3 caracteres');
-    }else {
-      nome.setAttribute('style', 'color: green');
-      validNome = true;
-      limparErro1();
+        nome.setAttribute('style', 'color: red');
+        validNome = false;
+        mostrarErro1('Nome *Insira no mínimo 3 caracteres');
+    } else {
+        nome.setAttribute('style', 'color: green');
+        validNome = true;
+        limparErro1();
     }
 });
 
@@ -86,36 +81,46 @@ senha.addEventListener('keyup', () => {
 });
 
 
-let listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]');
+
 let cadastroForm = document.querySelector('#cadastroForm');
-    
-    cadastroForm.addEventListener('submit', function(event) {
-      event.preventDefault(); 
+cadastroForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    if (validNome && validNomedeusuario && validEmail && validSenha) {
+        try {
+            const response = await fetch('/api/cadastrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    tipo: 'usuário',
+                    nome: nome.value,
+                    userCad: nomedeusuario.value,
+                    email: email.value,
+                    senha: senha.value,
+                }),
+            });
 
-      
-    if (validNome && validNomedeusuario  && validEmail && validSenha) {
+            const data = await response.json();
 
-        listaUser.push({
-            tipo: 'usuário',
-            nomeCad: nome.value,
-            userCad: nomedeusuario.value,
-            emailCad: email.value,
-            senhaCad: senha.value
-        });
-
-        localStorage.setItem('listaUser', JSON.stringify(listaUser));
-
-        msgSuccess.setAttribute('style', 'display: block');
-        msgSuccess.innerHTML = '<strong>Cadastrando usuário...</strong>';
-        msgError.style.display = 'none';
-
-        setTimeout(() => {
-            window.location.href = '/login/login.html';
-        }, 3003);
-    } else {
-        msgError.setAttribute('style', 'display: block; color: red;');
-        msgError.innerHTML = '<strong>Preencha todos os campos corretamente antes de cadastrar</strong>';
-        msgSuccess.style.display = 'none';
+            if (data.success) {
+                msgSuccess.setAttribute('style', 'display: block');
+                msgSuccess.innerHTML = '<strong>Cadastrando usuário...</strong>';
+                msgError.style.display = 'none';
+                setTimeout(() => {
+                    window.location.href = '/login/login.html';
+                }, 3000);
+            } else {
+                msgError.setAttribute('style', 'display: block; color: red;');
+                msgError.innerHTML = '<strong>Erro ao cadastrar usuário!</strong>';
+                msgSuccess.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Erro no cadastro', error);
+            msgError.setAttribute('style', 'display: block; color: red;');
+            msgError.innerHTML = '<strong>Erro ao tentar cadastrar!</strong>';
+            msgSuccess.style.display = 'none';
+        }
     }
 });
 
@@ -217,37 +222,49 @@ cnpj.addEventListener('keyup', () => {
     }
 })
 
+
 let cadastroEmpresa = document.querySelector('#cadastroEmpresa');
-    
-    cadastroEmpresa.addEventListener('submit', function(event) {
-      event.preventDefault(); 
-
-      
+cadastroEmpresa.addEventListener('submit', async function(event) {
+    event.preventDefault();
     if (validEmailEmpresa && validSenhaEmpresa && validCNPJ) {
-
-        let listaUser = JSON.parse(localStorage.getItem('listaUser') || '[]');
-        listaUser.push({
-        tipo: 'empresa',
-        nomeEmpresa: nomeEmpresa.value,
-        cnpj: cnpj.value,
-        emailEmpresa: emailEmpresa.value,
-        senhaEmpresa: senhaEmpresa.value
-        });
+        try {
+            // Realiza a requisição para o backend
+            const response = await fetch('/api/cadastrar', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    tipo: 'empresa',  // 'empresa' ou 'usuário'
+                    nomeEmpresa: nomeEmpresa.value,
+                    emailEmpresa: emailEmpresa.value,
+                    cnpj: cnpj.value,
+                    senhaEmpresa: senhaEmpresa.value
+                })
+            });
+    
         
+    
+            // Tenta converter a resposta em JSON
+            const data = await response.json();
+    
 
-        localStorage.setItem('listaUser', JSON.stringify(listaUser));
-
-        msgSuccess2.setAttribute('style', 'display: block');
-        msgSuccess2.innerHTML = '<strong>Cadastrando empresa..</strong>';
-        msgError2.style.display = 'none';
-
-        setTimeout(() => {
-            window.location.href = '/login/login.html';
-        }, 3003);
-    } else {
-        msgError2.setAttribute('style', 'display: block; color: red;');
-        msgError2.innerHTML = '<strong>Preencha todos os campos corretamente antes de cadastrar</strong>';
-        msgSuccess2.style.display = 'none';
+            if (data.success) {
+                msgSuccess.setAttribute('style', 'display: block');
+                msgSuccess.innerHTML = '<strong>Cadastrando usuário...</strong>';
+                msgError.style.display = 'none';
+                setTimeout(() => {
+                    window.location.href = '/login/login.html';
+                }, 3000);
+            } else {
+                msgError.setAttribute('style', 'display: block; color: red;');
+                msgError.innerHTML = '<strong>Erro ao cadastrar usuário!</strong>';
+                msgSuccess.style.display = 'none';
+            }
+        } catch (error) {
+            console.error('Erro no cadastro', error);
+            msgError.setAttribute('style', 'display: block; color: red;');
+            msgError.innerHTML = '<strong>Erro ao tentar cadastrar!</strong>';
+            msgSuccess.style.display = 'none';
+        }
     }
 });
 

@@ -3,7 +3,6 @@ body {
     background-color: #f8f9fa;
     background-image: url('/images/background.jpg');
     background-size: cover; /* Ajusta a imagem de fundo para cobrir toda a área */
-    background-position: center; /* Centraliza a imagem */
     
 }
 
