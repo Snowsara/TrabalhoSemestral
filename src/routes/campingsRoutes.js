@@ -1,10 +1,10 @@
 const express = require('express');
-const upload = require('../middlewares/uploads'); // Importa a configuração do Multer
+const uploads = require('../middlewares/uploads'); // Importa a configuração do Multer
 
 const router = express.Router();
 
 // Rota para upload de imagem do camping
-router.post('/uploadImagem', upload.single('imagem'), (req, res) => {
+router.post('/uploadImagem', uploads.single('imagem'), (req, res) => {
   // Verifica se o arquivo foi enviado
   if (!req.file) {
     return res.status(400).send('Nenhuma imagem foi enviada');

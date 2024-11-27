@@ -5,6 +5,8 @@ const path = require('path');
 const mysql = require('mysql2/promise');
 const fs = require("fs");
 const cors = require("cors");
+const bodyParser = require('body-parser');
+const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
 
 const app = express();
@@ -15,6 +17,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
 
+// Configuração do body-parser para processar dados do formulário
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configuração do Multer para upload de imagens
 const storage = multer.diskStorage({
@@ -26,18 +31,55 @@ const storage = multer.diskStorage({
     }
 });
 
-const upload = multer({ storage: storage });
+
+
+const uploads = multer({ storage: storage });
+app.use(express.static(path.join(__dirname, 'public')));
+
+
+//Rotas
+app.use(express.static('public', {
+    setHeaders: (res, path, stat) => {
+        if (path.endsWith('.js')) {
+            res.set('Content-Type', 'application/javascript');
+        } else if (path.endsWith('.css')) {
+            res.set('Content-Type', 'text/css');
+        }
+    }
+}));
+
+
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "inicial", "index.html"));
+});
+
+app.get("/cadastro", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "cadastro", "cadastro.html"));
+});
+
+app.get("/cadastro_camping", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "cadastro_camping", "cadastro_camping.html"));
+});
+
+app.get("/campings_cadastrados", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "campings_cadastrados", "campings_cadastrados.html"));
+});
+
+app.get("/campings", (req, res) => {
+    const campings = carregarCampings(); // Carrega os campings do arquivo JSON
+    res.json(campings); // Retorna todos os campings cadastrados
+});
 
 // Conexão com o MariaDB
 const pool = mysql.createPool({
     host: 'localhost',
     user: 'root',
-    password: 'senha', // Substitua pela sua senha
-    database: 'nome_do_banco' // Substitua pelo nome do seu banco de dados
+    password: 'senha', 
+    database: 'nome_do_banco' 
 });
 
 // Endpoint para o upload de imagens e cadastro do camping
-app.post('/campings/uploadImagem', upload.array('imagens', 5), async (req, res) => {
+app.post('/campings/uploadImagem', uploads.array('imagens', 5), async (req, res) => {
     try {
         // Obtém os caminhos das imagens enviadas
         const imagens = req.files.map(file => `/uploads/${file.filename}`);
