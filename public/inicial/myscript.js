@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function() {
         sairBtn.addEventListener("click", async function() {
             try {
                 await fetch('/api/sair', { method: 'POST', credentials: 'include' });
-                window.location.href = "/inicial/index.html"; // Redireciona para a página de login
+                window.location.href = "../inicial/index.html"; // Redireciona para a página de login
             } catch (error) {
                 console.error('Erro ao sair', error);
             }
