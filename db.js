@@ -1,3 +1,4 @@
+
 const db = require('mysql2');
 
 // Configuração de conexão com o banco de dados
@@ -11,6 +12,7 @@ const connection = db.createConnection({
 
 // Conectar ao banco de dados
 connection.connect((err) => {
+
   if (err) {
     console.error('Erro ao conectar ao banco de dados:', err.stack);
     return;

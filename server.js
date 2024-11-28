@@ -11,7 +11,6 @@ const port = 3003;
 const connection = require('./db');
 
 
-
 const app = express();
 
 // Middleware para processar dados JSON e formulários
