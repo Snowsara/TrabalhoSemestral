@@ -8,6 +8,9 @@ const cors = require("cors");
 const bodyParser = require('body-parser');
 const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
+const db = require('../db_Camping');
+
+
 
 const app = express();
 
@@ -70,13 +73,7 @@ app.get("/campings", (req, res) => {
     res.json(campings); // Retorna todos os campings cadastrados
 });
 
-// Conexão com o MariaDB
-const pool = mysql.createPool({
-    host: 'localhost',
-    user: 'root',
-    password: 'senha', 
-    database: 'nome_do_banco' 
-});
+
 
 // Endpoint para o upload de imagens e cadastro do camping
 app.post('/campings/uploadImagem', uploads.array('imagens', 5), async (req, res) => {
