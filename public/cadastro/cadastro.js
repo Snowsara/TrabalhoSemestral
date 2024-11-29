@@ -273,18 +273,3 @@ function limparMensagemDeErro(){
     msgError2.style.display = 'none';
     msgError2.innerHTML = '';
 }
-
-/*let opcaocadastroForm = document.querySelector('#opcaoForm');
-let opcaocadastroEmpresa = document.querySelector('#opcaoEmpresa');
-
-opcaocadastroForm.addEventListener('click', () => {
-    limparMensagemDeErro();
-    document.querySelector('#cadastroForm').style.display = 'block';
-    document.querySelector('#cadastroEmpresa').style.display = 'none';
-});
-
-opcaocadastroEmpresa.addEventListener('click', () => {
-    limparMensagemDeErro();
-    document.querySelector('#cadastroEmpresa').style.display = 'block';
-    document.querySelector('#cadastroForm').style.display = 'none';
-});*/
