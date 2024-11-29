@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const menuCadastrarCamping = document.getElementById("menuCadastrarCamping");
 
     // Função para verificar se o usuário está logado
-    const verificarUsuarioLogado = async () => {
+    /*const verificarUsuarioLogado = async () => {
         try {
             const response = await fetch('/api/verificar_usuario', {
                 method: 'GET',
@@ -30,10 +30,10 @@ document.addEventListener("DOMContentLoaded", function() {
         } catch (error) {
             console.error('Erro ao verificar usuário', error);
         }
-    };
+    };*/
 
     // Verificar o usuário ao carregar a página
-    verificarUsuarioLogado();
+    //verificarUsuarioLogado();
 
     // Botão de sair
     if (sairBtn) {

@@ -48,9 +48,9 @@ nomedeusuario.addEventListener('keyup', () => {
     if (nomedeusuario.value.length <= 4) {
         nomedeusuario.setAttribute('style', 'border-color: red');
         validNomedeusuario = false;
-        mostrarErro1 ('Usuário *Insira no mínimo 5 caracteres');
+        mostrarErro1 ('Usuário *Insira no mínimo 4 caracteres');
     } else {
-        nome.setAttribute('style', 'border-color: green');
+        nomedeusuario.setAttribute('style', 'border-color: green');
         validNomedeusuario = true;
         limparErro1();
     }
@@ -97,6 +97,7 @@ cadastroForm.addEventListener('submit', async function(event) {
                     userCad: nomedeusuario.value,
                     email: email.value,
                     senha: senha.value,
+                    tipo: 'usuario'
                 }),
             });
 
@@ -107,7 +108,7 @@ cadastroForm.addEventListener('submit', async function(event) {
                 msgSuccess.innerHTML = '<strong>Cadastrando usuário...</strong>';
                 msgError.style.display = 'none';
                 setTimeout(() => {
-                    window.location.href = '/login/login.html';
+                    window.location.href = '/login';
                 }, 3000);
             } else {
                 msgError.setAttribute('style', 'display: block; color: red;');

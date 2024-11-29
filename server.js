@@ -8,7 +8,7 @@ const cors = require("cors");
 const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
 const connection = require('./db');
-const bcrypt = require('bcrypt');
+
 const { getSystemErrorMap } = require('util');
 
 
@@ -44,6 +44,10 @@ app.get("/", (req, res) => {
 
 app.get("/cadastro", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "cadastro", "cadastro.html"));
+});
+
+app.get("/login", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "login", "login.html"));
 });
 
 app.get("/cadastro_camping", (req, res) => {
@@ -129,10 +133,10 @@ app.post('/api/login', async (req, res) => {
     const { email, senha } = req.body;
 
     const user = await User.findOne({ where: { emailCad: email } });
-    
+
     if (user) {
-        const senhaValida = await bcrypt.compare(senha, user.senhaCad); // Verifica senha com bcrypt
-        if (senhaValida) {
+        // Compare diretamente a senha, sem usar bcrypt
+        if (senha === user.senhaCad) { // Senha sem hash
             req.session.user = { id: user.id, tipo: user.tipo, nomeEmpresa: user.nomeEmpresa };
             res.json({ success: true, user: { tipo: user.tipo, userCad: user.userCad, nomeEmpresa: user.nomeEmpresa } });
         } else {
@@ -153,9 +157,6 @@ app.post('/api/cadastrar', async (req, res) => {
         return res.status(400).json({ success: false, message: 'Nome da empresa e CNPJ são obrigatórios!' });
     }
 
-    // Gera um hash da senha com bcrypt
-    const hashedSenha = await bcrypt.hash(senha, 10); // 10 é o fator de custo, que define a força da criptografia
-
     try {
         let newUser;
         
@@ -166,16 +167,16 @@ app.post('/api/cadastrar', async (req, res) => {
                     nm_empresa,
                     nr_cnpj,
                     ds_emailempresa,
-                    ds_senhaempresa,
+                    ds_senhaempresa
                 ) VALUES (?,?,?,?);
             `;
 
-            // Executa a query de cadastro da empresa
-            await connection.promise().query(sqlEmpresa, [nomeEmpresa, emailEmpresa, hashedSenha, cnpj]);
+            // Executa a query de cadastro da empresa (sem hash na senha)
+            await connection.promise().query(sqlEmpresa, [nomeEmpresa, emailEmpresa, senha, cnpj]);
 
             // Simula o retorno do novo usuário (empresa) para resposta de sucesso
             newUser = { nomeEmpresa, emailEmpresa, tipo };
-        
+
         // Inserção para usuários normais
         } else {
             const sqlUsuario = `
@@ -187,8 +188,8 @@ app.post('/api/cadastrar', async (req, res) => {
                 ) VALUES (?,?,?,?);
             `;
             
-            // Executa a query de cadastro do usuário
-            await connection.promise().query(sqlUsuario, [nomec, nomedeusuario, email, hashedSenha]);
+            // Executa a query de cadastro do usuário (sem hash na senha)
+            await connection.promise().query(sqlUsuario, [nomec, nomedeusuario, email, senha]);
 
             // Simula o retorno do novo usuário (pessoa física) para resposta de sucesso
             newUser = { nomec, nomedeusuario, email, tipo: 'usuário' };
@@ -205,13 +206,13 @@ app.post('/api/cadastrar', async (req, res) => {
 
 
 // Endpoint para verificar se o usuário está logado
-app.get('/api/verificar_usuario', (req, res) => {
+/*app.get('/api/verificar_usuario', (req, res) => {
     if (req.session.user) {
         res.json({ success: true, user: req.session.user });
     } else {
         res.json({ success: false });
     }
-});
+});*/
 
 // Endpoint para logout
 app.post('/api/sair', (req, res) => {
