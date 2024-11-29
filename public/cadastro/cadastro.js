@@ -32,25 +32,25 @@ const limparErro1 = () => {
     msgError.innerHTML = '';
 };
 
-nome.addEventListener('keyup', () => {
-    if (nome.value.length <= 2) {
-        nome.setAttribute('style', 'color: red');
+nomec.addEventListener('keyup', () => {
+    if (nomec.value.length <= 2) {
+        nomec.setAttribute('style', 'color: red');
         validNome = false;
         mostrarErro1('Nome *Insira no mínimo 3 caracteres');
     } else {
-        nome.setAttribute('style', 'color: green');
+        nomec.setAttribute('style', 'color: green');
         validNome = true;
         limparErro1();
     }
 });
 
-nomedeusuario.addEventListener('keyup', () => {
-    if (nomedeusuario.value.length <= 4) {
-        nomedeusuario.setAttribute('style', 'border-color: red');
+nome.addEventListener('keyup', () => {
+    if (nome.value.length <= 4) {
+        nome.setAttribute('style', 'border-color: red');
         validNomedeusuario = false;
         mostrarErro1 ('Usuário *Insira no mínimo 5 caracteres');
     } else {
-        nomedeusuario.setAttribute('style', 'border-color: green');
+        nome.setAttribute('style', 'border-color: green');
         validNomedeusuario = true;
         limparErro1();
     }
@@ -93,9 +93,8 @@ cadastroForm.addEventListener('submit', async function(event) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    tipo: 'usuário',
-                    nome: nome.value,
-                    userCad: nomedeusuario.value,
+                    nomec: nomec.value,
+                    nome: nomedeusuario.value,
                     email: email.value,
                     senha: senha.value,
                 }),

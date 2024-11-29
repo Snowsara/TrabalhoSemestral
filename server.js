@@ -9,6 +9,7 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
 const connection = require('./db');
+const { getSystemErrorMap } = require('util');
 
 
 const app = express();
@@ -18,10 +19,6 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
-
-// Configuração do body-parser para processar dados do formulário
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 // Configuração do Multer para upload de imagens
 const storage = multer.diskStorage({
@@ -39,16 +36,6 @@ const uploads = multer({ storage: storage });
 app.use(express.static(path.join(__dirname, 'public')));
 
 
-//Rotas
-app.use(express.static('public', {
-    setHeaders: (res, path, stat) => {
-        if (path.endsWith('.js')) {
-            res.set('Content-Type', 'application/javascript');
-        } else if (path.endsWith('.css')) {
-            res.set('Content-Type', 'text/css');
-        }
-    }
-}));
 
 
 app.get("/", (req, res) => {
@@ -158,15 +145,35 @@ app.post('/api/login', async (req, res) => {
 
 // Endpoint de cadastro
 app.post('/api/cadastrar', async (req, res) => {
-    const { tipo, nome, userCad, email, senha, nomeEmpresa, cnpj } = req.body;
+    const { nomec, nome, email, senha } = req.body;
 
-    // Se for uma empresa, validamos o CNPJ
-    if (tipo === 'empresa' && (!nomeEmpresa || !cnpj)) {
-        return res.status(400).json({ success: false, message: 'Nome da empresa e CNPJ são obrigatórios!' });
+    const sql = `
+        INSERT into Tbl_CadUsuario (
+            nm_completouser, 
+            nm_usuario,
+            ds_email,
+            ds_senha
+            ) VALUES (?,?,?,?);
+    ` ;
+    
+    try{
+
+    await connection.promise().query(sql,[nomec, nome, email, senha]);
+    res.json({sucesso: true, mensagem: "Cadastro realizado com sucesso!!!"});
+
+    }catch(error){
+     console.error("Erro ao realizar cadastro",error);
+     res.status(500).json({sucesso:false, mensagem:"Erro ao realizar cadastro"+error});   
     }
 
+
+    // Se for uma empresa, validamos o CNPJ
+    //if (tipo === 'empresa' && (!nomeEmpresa || !cnpj)) {
+        //return res.status(400).json({ success: false, message: 'Nome da empresa e CNPJ são obrigatórios!' });
+    //}
+
     // Criptografando a senha
-    const hashedSenha = await bcrypt.hash(senha, 10);
+    //const hashedSenha = await bcrypt.hash(senha, 10);
 
     try {
         let newUser;
