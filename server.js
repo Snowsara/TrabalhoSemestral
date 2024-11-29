@@ -5,10 +5,10 @@ const path = require('path');
 const mysql = require('mysql2/promise');
 const fs = require("fs");
 const cors = require("cors");
-const bodyParser = require('body-parser');
 const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
 const connection = require('./db');
+const bcrypt = require('bcrypt');
 const { getSystemErrorMap } = require('util');
 
 
@@ -143,67 +143,66 @@ app.post('/api/login', async (req, res) => {
     }
 });
 
+
 // Endpoint de cadastro
 app.post('/api/cadastrar', async (req, res) => {
-    const { nomec, nome, email, senha } = req.body;
+    const { nomec, nomedeusuario, email, senha, tipo, nomeEmpresa, cnpj, emailEmpresa } = req.body;
 
-    const sql = `
-        INSERT into Tbl_CadUsuario (
-            nm_completouser, 
-            nm_usuario,
-            ds_email,
-            ds_senha
-            ) VALUES (?,?,?,?);
-    ` ;
-    
-    try{
-
-    await connection.promise().query(sql,[nomec, nome, email, senha]);
-    res.json({sucesso: true, mensagem: "Cadastro realizado com sucesso!!!"});
-
-    }catch(error){
-     console.error("Erro ao realizar cadastro",error);
-     res.status(500).json({sucesso:false, mensagem:"Erro ao realizar cadastro"+error});   
+    // Verifica se é uma empresa e valida os campos obrigatórios
+    if (tipo === 'empresa' && (!nomeEmpresa || !cnpj)) {
+        return res.status(400).json({ success: false, message: 'Nome da empresa e CNPJ são obrigatórios!' });
     }
 
-
-    // Se for uma empresa, validamos o CNPJ
-    //if (tipo === 'empresa' && (!nomeEmpresa || !cnpj)) {
-        //return res.status(400).json({ success: false, message: 'Nome da empresa e CNPJ são obrigatórios!' });
-    //}
-
-    // Criptografando a senha
-    //const hashedSenha = await bcrypt.hash(senha, 10);
+    // Gera um hash da senha com bcrypt
+    const hashedSenha = await bcrypt.hash(senha, 10); // 10 é o fator de custo, que define a força da criptografia
 
     try {
         let newUser;
         
-        // Criar novo usuário ou empresa
+        // Inserção para empresas
         if (tipo === 'empresa') {
-            newUser = await User.create({
-                nomeEmpresa: nomeEmpresa,
-                emailEmpresa: emailEmpresa,
-                senhaEmpresa: hashedSenha,
-                cnpj,  // CNPJ da empresa
-                tipo,  // 'empresa'
-            });
+            const sqlEmpresa = `
+                INSERT INTO Tbl_CadEmpresa (
+                    nm_empresa,
+                    nr_cnpj,
+                    ds_emailempresa,
+                    ds_senhaempresa,
+                ) VALUES (?,?,?,?);
+            `;
+
+            // Executa a query de cadastro da empresa
+            await connection.promise().query(sqlEmpresa, [nomeEmpresa, emailEmpresa, hashedSenha, cnpj]);
+
+            // Simula o retorno do novo usuário (empresa) para resposta de sucesso
+            newUser = { nomeEmpresa, emailEmpresa, tipo };
+        
+        // Inserção para usuários normais
         } else {
-            newUser = await User.create({
-                nomeCad: nome,
-                userCad,
-                emailCad: email,
-                senhaCad: hashedSenha,
-                tipo: 'usuário',  // Tipo de usuário padrão
-            });
+            const sqlUsuario = `
+                INSERT INTO Tbl_CadUsuario (
+                    nm_completouser, 
+                    nm_usuario,
+                    ds_email,
+                    ds_senha
+                ) VALUES (?,?,?,?);
+            `;
+            
+            // Executa a query de cadastro do usuário
+            await connection.promise().query(sqlUsuario, [nomec, nomedeusuario, email, hashedSenha]);
+
+            // Simula o retorno do novo usuário (pessoa física) para resposta de sucesso
+            newUser = { nomec, nomedeusuario, email, tipo: 'usuário' };
         }
 
-        // Retorna a resposta de sucesso
+        // Retorna a resposta de sucesso com o novo usuário cadastrado
         res.json({ success: true, user: newUser });
+
     } catch (error) {
-        console.error('Erro ao cadastrar', error);
-        res.status(500).json({ success: false, message: 'Erro interno no servidor!' });
+        console.error("Erro ao realizar cadastro", error);
+        res.status(500).json({ success: false, message: "Erro ao realizar cadastro: " + error });
     }
 });
+
 
 // Endpoint para verificar se o usuário está logado
 app.get('/api/verificar_usuario', (req, res) => {

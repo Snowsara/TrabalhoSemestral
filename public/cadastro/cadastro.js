@@ -10,8 +10,8 @@ document.getElementById('tipoCadastro').addEventListener('change', function() {
     }
 });
 
-let nome = document.querySelector('#nome');
-let validNome = false;
+let nomec = document.querySelector('#nomec');
+let validNomec = false;
 let nomedeusuario = document.querySelector('#nomedeusuario');
 let validNomedeusuario = false;
 let email = document.querySelector('#email');
@@ -35,7 +35,7 @@ const limparErro1 = () => {
 nomec.addEventListener('keyup', () => {
     if (nomec.value.length <= 2) {
         nomec.setAttribute('style', 'color: red');
-        validNome = false;
+        validNomec = false;
         mostrarErro1('Nome *Insira no mínimo 3 caracteres');
     } else {
         nomec.setAttribute('style', 'color: green');
@@ -44,9 +44,9 @@ nomec.addEventListener('keyup', () => {
     }
 });
 
-nome.addEventListener('keyup', () => {
-    if (nome.value.length <= 4) {
-        nome.setAttribute('style', 'border-color: red');
+nomedeusuario.addEventListener('keyup', () => {
+    if (nomedeusuario.value.length <= 4) {
+        nomedeusuario.setAttribute('style', 'border-color: red');
         validNomedeusuario = false;
         mostrarErro1 ('Usuário *Insira no mínimo 5 caracteres');
     } else {
@@ -85,7 +85,7 @@ senha.addEventListener('keyup', () => {
 let cadastroForm = document.querySelector('#cadastroForm');
 cadastroForm.addEventListener('submit', async function(event) {
     event.preventDefault();
-    if (validNome && validNomedeusuario && validEmail && validSenha) {
+    if (validNomec && validNomedeusuario && validEmail && validSenha) {
         try {
             const response = await fetch('/api/cadastrar', {
                 method: 'POST',
@@ -94,7 +94,7 @@ cadastroForm.addEventListener('submit', async function(event) {
                 },
                 body: JSON.stringify({
                     nomec: nomec.value,
-                    nome: nomedeusuario.value,
+                    userCad: nomedeusuario.value,
                     email: email.value,
                     senha: senha.value,
                 }),
