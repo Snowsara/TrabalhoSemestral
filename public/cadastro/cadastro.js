@@ -33,13 +33,13 @@ const limparErro1 = () => {
 };
 
 nomec.addEventListener('keyup', () => {
-    if (nomec.value.length <= 2) {
+    if (nomec.length <= 2) {
         nomec.setAttribute('style', 'color: red');
         validNomec = false;
         mostrarErro1('Nome *Insira no mínimo 3 caracteres');
     } else {
         nomec.setAttribute('style', 'color: green');
-        validNome = true;
+        validNomec = true;
         limparErro1();
     }
 });
@@ -87,6 +87,8 @@ cadastroForm.addEventListener('submit', async function(event) {
     event.preventDefault();
     if (validNomec && validNomedeusuario && validEmail && validSenha) {
         try {
+            console.log(validNomec,validNomedeusuario, validEmail, validSenha)
+
             const response = await fetch('/api/cadastrar', {
                 method: 'POST',
                 headers: {
@@ -96,20 +98,17 @@ cadastroForm.addEventListener('submit', async function(event) {
                     nomec: nomec.value,
                     userCad: nomedeusuario.value,
                     email: email.value,
-                    senha: senha.value,
-                    tipo: 'usuario'
+                    senha: senha.value
                 }),
             });
 
             const data = await response.json();
-
             if (data.success) {
+                console.log(1);
+                    window.location.href = '/login';
                 msgSuccess.setAttribute('style', 'display: block');
                 msgSuccess.innerHTML = '<strong>Cadastrando usuário...</strong>';
                 msgError.style.display = 'none';
-                setTimeout(() => {
-                    window.location.href = '/login';
-                }, 3000);
             } else {
                 msgError.setAttribute('style', 'display: block; color: red;');
                 msgError.innerHTML = '<strong>Erro ao cadastrar usuário!</strong>';

@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", function() {
-    const email = document.getElementById("email");
-    const senha = document.getElementById("senha");
-    const loginForm = document.getElementById("loginForm");
+    const email = document.getElementById("email").value;
+    const senha = document.getElementById("senha").value;
+    const loginForm = document.getElementById("loginForm").value;
     
     let validEmail = false;
     let validSenha = false;
@@ -9,7 +9,7 @@ document.addEventListener("DOMContentLoaded", function() {
     let msgSuccess = document.querySelector('#msgSuccess');
 
     email.addEventListener('keyup', () => {
-        if (email.value.length <= 4) {
+        if (email.length <= 4) {
             email.setAttribute('style', 'border-color: red');
             validEmail = false;
             msgError.innerHTML = 'Email *Insira no mínimo 6 caracteres';
@@ -22,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function() {
     });
 
     senha.addEventListener('keyup', () => {
-        if (senha.value.length <= 5) {
+        if (senha.length <= 5) {
             senha.setAttribute('style', 'border-color: red');
             validSenha = false;
             msgError.innerHTML = 'Senha *Insira no mínimo 6 caracteres';
@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 const response = await fetch('/api/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email.value, senha: senha.value })
+                    body: JSON.stringify({ email: email, senha: senha })
                 });
 
                 const data = await response.json();
