@@ -11,30 +11,28 @@
   <link rel="stylesheet" href="https://unpkg.com/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://unpkg.com/bs-brain@2.0.4/components/logins/login-7/assets/css/login-7.css">
 </head>
+
 <body>
-  <div class="contact-form">
-    <img alt="" class="avatar" src="../images/logo-trab-semestral.png">
-    <h2>Login</h2>
-    <form id="loginForm">
-      <p>E-mail</p><input id="email" placeholder="Digite seu e-mail" type="email">
-      <p>Senha</p><input id="senha" placeholder="Digite sua senha" type="password">
-      <input class="custom-btn btn-4 botaoLogin" type="submit" value="Entrar">
-      <p id="msgError" style="display: none; color: red;"></p> 
-      <p id="msgSuccess" style="display: none; color: green;"></p> 
-      <p><input type="checkbox">Lembrar-me</p>
-    </form>
-      <div class="row">
-        <div class="col-12">
-          <div class="d-flex gap-2 gap-md-6 flex-column flex-md-row justify-content-md-center">
-            <a href="../cadastro/cadastro.html" class="link-secondary text-decoration-none">CADASTRO</a><br>
-            <a href="#!" class="link-secondary text-decoration-none">ESQUECI A SENHA</a>
-          </div>
-        </div><br><br>
-        <div class="row">
-        <div class="col-12"></div>
-          <script src="../login/login.js"></script>
-          <script src="../inicial/myscript.js"></script>
-        </div>  
+<div class="contact-form">
+  <img alt="" class="avatar" src="../images/logo-trab-semestral.png">
+  <h2>Login</h2>
+  <form id="loginForm">
+    <p>E-mail</p><input id="email" name="email" placeholder="Digite seu e-mail" type="email">
+    <p>Senha</p><input id="senha" name="senha" placeholder="Digite sua senha" type="password">
+    <input type="submit" value="Entrar">
+  </form>
+
+  <div class="row">
+    <div class="col-12">
+      <div class="d-flex gap-2 gap-md-6 flex-column flex-md-row justify-content-md-center">
+        <a href="../cadastro/cadastro.html" class="link-secondary text-decoration-none">CADASTRO</a><br>
+        <a href="#!" class="link-secondary text-decoration-none">ESQUECI A SENHA</a>
       </div>
+    </div><br><br>
+  </div>
+</div>
+<script src="../login/login.js"></script>
+<script src="../inicial/myscript.js"></script>
 </body>
+
 </html>

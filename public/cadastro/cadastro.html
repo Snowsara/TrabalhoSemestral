@@ -29,23 +29,22 @@
             <option value="usuario">Usuário</option>
             <option value="empresa">Empresa</option>
         </select>
-        <form action="../login/login.html" id="cadastroForm">
-            <p>Nome Completo</p><input id="nomec" placeholder="Digite seu nome completo" type="text">
-            <p>Nome de Usuário</p><input id="nomedeusuario" placeholder="@nomedeusuario" type="text">
-            <p>E-mail</p><input id="email" placeholder="Digite seu e-mail" type="email">
-            <p>Senha</p><input id="senha" placeholder="Digite uma senha" type="password">
+        <form id="cadastroForm" action="/api/cadastrar" method="POST">
+            <p>Nome Completo</p><input id="nomec" name="nomec" placeholder="Digite seu nome completo" type="text">
+            <p>Nome de Usuário</p><input id="nomedeusuario" name="nomedeusuario" placeholder="@nomedeusuario" type="text">
+            <p>E-mail</p><input id="email" name="email" placeholder="Digite seu e-mail" type="email">
+            <p>Senha</p><input id="senha" name="senha" placeholder="Digite uma senha" type="password">
             <input class="custom-btn btn-4 botaoLogin" type="submit" value="Criar minha conta">
         </form>
-        <div id="msgError" style="display: none; color: red;"></div>
-        <div id="msgSuccess" style="display: none; color: green;"></div>
 
-        <form action="../login/login.html" id="cadastroEmpresa" style="display: none;">
-            <p>Nome da Empresa</p><input id="nomeEmpresa" placeholder="Digite o nome da sua empresa" type="text">
-            <p>CNPJ</p><input id="cnpj" placeholder="CNPJ" type="text">
-            <p>E-mail</p><input id="emailEmpresa" placeholder="Digite o e-mail da sua empresa" type="email">
-            <p>Senha</p><input id="senhaEmpresa" placeholder="Digite uma senha" type="password">
+        <form id="cadastroEmpresa" action="/api/cadastrar" method="POST" style="display: none;">
+            <p>Nome da Empresa</p><input id="nomeEmpresa" name="nomeEmpresa" placeholder="Digite o nome da sua empresa" type="text">
+            <p>CNPJ</p><input id="cnpj" name="cnpj" placeholder="CNPJ" type="text">
+            <p>E-mail</p><input id="emailEmpresa" name="emailEmpresa" placeholder="Digite o e-mail da sua empresa" type="email">
+            <p>Senha</p><input id="senhaEmpresa" name="senha" placeholder="Digite uma senha" type="password">
             <input class="custom-btn btn-4 botaoLogin" type="submit" value="Cadastrar Empresa">
         </form>
+
         <div id="msgError2" style="display: none; color: red;"></div>
         <div id="msgSuccess2" style="display: none; color: green;"></div>
     </div><br><br>

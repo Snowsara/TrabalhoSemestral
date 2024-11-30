@@ -73,17 +73,17 @@ app.post('/campings/uploadImagem', uploads.array('imagens', 5), async (req, res)
 
         // Dados do camping
         const { nomeCamping, nomeFantasia, cnpj, responsavel, email, telefone, endereco,
-          areaAtuacao, coordenadasGPS, equipamentosAceitacao, equipamentos, animaisEstimacoes,
-          praia, calendarioFuncionamento, regrasInternas, eletricidade, acessibilidade, comunicacao,
-          veiculosRecreacao, trilhas, siteInternet, redeSocial } = req.body;
+            areaAtuacao, coordenadasGPS, equipamentosAceitacao, equipamentos, animaisEstimacoes,
+            praia, calendarioFuncionamento, regrasInternas, eletricidade, acessibilidade, comunicacao,
+            veiculosRecreacao, trilhas, siteInternet, redeSocial } = req.body;
 
         // Insere os dados do camping no MariaDB
         const sql = `
-        INSERT INTO T_CAMPINGS (nome, nome_fantasia, cnpj, responsavel, email, telefone, endereco, area_atuacao, 
-        coordenadas_gps, equipamentos_aceitacao, equipamentos, animais_estimacoes, praia, 
-        calendario_funcionamento, regras_internas, eletricidade, acessibilidade, comunicacao, 
-        veiculos_recreacao, trilhas, site_internet, rede_social, imagens)
-         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+            INSERT INTO T_CAMPINGS (nome, nome_fantasia, cnpj, responsavel, email, telefone, endereco, area_atuacao,
+                                    coordenadas_gps, equipamentos_aceitacao, equipamentos, animais_estimacoes, praia,
+                                    calendario_funcionamento, regras_internas, eletricidade, acessibilidade, comunicacao,
+                                    veiculos_recreacao, trilhas, site_internet, rede_social, imagens)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
 
         const [result] = await pool.execute(sql, [
             nomeCamping,
@@ -93,20 +93,20 @@ app.post('/campings/uploadImagem', uploads.array('imagens', 5), async (req, res)
             cnpj,
             email,
             telefone,
-            areaAtuacao, 
-            coordenadasGPS, 
-            equipamentosAceitacao, 
-            equipamentos, 
+            areaAtuacao,
+            coordenadasGPS,
+            equipamentosAceitacao,
+            equipamentos,
             animaisEstimacoes,
-            praia, 
-            calendarioFuncionamento, 
-            regrasInternas, 
-            eletricidade, 
-            acessibilidade, 
+            praia,
+            calendarioFuncionamento,
+            regrasInternas,
+            eletricidade,
+            acessibilidade,
             comunicacao,
-            veiculosRecreacao, 
-            trilhas, 
-            siteInternet, 
+            veiculosRecreacao,
+            trilhas,
+            siteInternet,
             redeSocial,
             imagens.join(',') // Armazena os caminhos das imagens como uma string separada por vírgulas
         ]);
@@ -129,20 +129,30 @@ app.post('/campings/uploadImagem', uploads.array('imagens', 5), async (req, res)
 app.use('/uploads', express.static('uploads'));
 
 // Endpoint de login
-app.post('/api/login', async (req, res) => {
-    const {user, email, senha } = req.body;
+app.post('/api/login', (req, res) => {
+    const { email, senha } = req.body;
 
-    if (user) {
-        // Compare diretamente a senha, sem usar bcrypt
-        if (senha === user.senhaCad) { // Senha sem hash
-            req.session.user = { id: user.id, tipo: user.tipo, nomeEmpresa: user.nomeEmpresa };
-            res.json({ success: true, user: { tipo: user.tipo, userCad: user.userCad, nomeEmpresa: user.nomeEmpresa } });
-        } else {
-            res.json({ success: false });
-        }
-    } else {
-        res.json({ success: false });
+    if (!email || !senha) {
+        return res.status(400).json({ success: false, message: "Email e senha são obrigatórios!" });
     }
+
+    // Consultar o banco de dados para verificar as credenciais
+    const query = 'SELECT * FROM Tbl_CadUsuario WHERE ds_email = ? AND ds_senha = ?';
+
+    connection.query(query, [email, senha], (err, results) => {
+        if (err) {
+            console.error('Erro ao realizar a consulta no banco de dados:', err);
+            return res.status(500).json({ success: false, message: "Erro ao processar o login." });
+        }
+
+        if (results.length > 0) {
+            // Credenciais válidas
+            res.json({ success: true, message: "Login bem-sucedido!", user: results[0] });
+        } else {
+            // Credenciais inválidas
+            res.status(401).json({ success: false, message: "Email ou senha inválidos!" });
+        }
+    });
 });
 
 
@@ -160,13 +170,13 @@ app.post('/api/cadastrar', async (req, res) => {
         if (tipo === 'usuario') {
             const sqlUsuario = `
                 INSERT INTO Tbl_CadUsuario (
-                    nm_completouser, 
+                    nm_completouser,
                     nm_usuario,
                     ds_email,
                     ds_senha
                 ) VALUES (?,?,?,?);
             `;
-            
+
             // Executa a query para inserir o usuário no banco de dados
             await connection.promise().query(sqlUsuario, [nomec, nomedeusuario, email, senha]);
 
@@ -188,7 +198,7 @@ app.post('/api/cadastrar', async (req, res) => {
                     ds_senhaempresa
                 ) VALUES (?,?,?,?);
             `;
-            
+
             // Executa a query para inserir a empresa no banco de dados
             await connection.promise().query(sqlEmpresa, [nomeEmpresa, emailEmpresa, senha, cnpj]);
 
@@ -227,6 +237,5 @@ app.post('/api/sair', (req, res) => {
 
 // Inicializa o servidor
 app.listen(port, () => {
-  console.log(`Servidor rodando em http://localhost:${port}`);
+    console.log(`Servidor rodando em http://localhost:${port}`);
 });
-
