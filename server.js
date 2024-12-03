@@ -10,6 +10,7 @@ const port = 3003;
 const connection = require('./db');
 
 const { getSystemErrorMap } = require('util');
+const { error } = require('console');
 
 
 const app = express();
@@ -19,6 +20,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 
+// Configurar sessões
+app.use(session({
+    secret: 'segredo_super_secreto',
+    resave: false,
+    saveUninitialized: true
+}));
 
 // Configuração do Multer para upload de imagens
 const storage = multer.diskStorage({
@@ -58,144 +65,93 @@ app.get("/campings_cadastrados", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "campings_cadastrados", "campings_cadastrados.html"));
 });
 
-app.get("/campings", (req, res) => {
-    const campings = carregarCampings(); // Carrega os campings do arquivo JSON
-    res.json(campings); // Retorna todos os campings cadastrados
+
+// Endpoint para cadastrar camping
+app.post('/cadastrar_camping', (req, res) => {
+    const { nm_camping, nm_responsavel, nr_telefone, tp_acampamento, ob_animal,
+        ob_eletrica} = req.body;
+    
+    const sql = `INSERT INTO Tbl_Camping (nm_camping, nm_responsavel, nr_telefone,
+    tp_acampamento, ob_animal, ob_eletrica) VALUES (?, ?, ?, ?, ?, ?)`;
+
+    db.query(sql, [nm_camping, nm_responsavel, nr_telefone,
+    tp_acampamento, ob_animal, ob_eletrica], (err, result ) => {
+        if(err) {
+            res.status(500).send({error: 'Erro ao cadastrar camping'});
+        }else{
+            res.status({ message: 'Camping cadastrado com sucesso!' });
+        }
+    });
+});
+
+app.get('/campings', (req, res) => {
+    const sql = `SELECT * FROM Tbl_Camping`;
+
+    db.query(sql, (err, result) => {
+        if(err) {
+            res.status(500).send({ error: 'Erro ao buscar campings'});
+        }else {
+            res.send(result);
+        }
+    });
 });
 
 
-
-// Endpoint para o upload de imagens e cadastro do camping
-app.post('/campings/uploadImagem', uploads.array('imagens', 5), async (req, res) => {
-    try {
-        // Obtém os caminhos das imagens enviadas
-        const imagens = req.files.map(file => `/uploads/${file.filename}`);
-
-        // Dados do camping
-        const { nomeCamping, nomeFantasia, cnpj, responsavel, email, telefone, endereco,
-            areaAtuacao, coordenadasGPS, equipamentosAceitacao, equipamentos, animaisEstimacoes,
-            praia, calendarioFuncionamento, regrasInternas, eletricidade, acessibilidade, comunicacao,
-            veiculosRecreacao, trilhas, siteInternet, redeSocial } = req.body;
-
-        // Insere os dados do camping no MariaDB
-        const sql = `
-            INSERT INTO T_CAMPINGS (nome, nome_fantasia, cnpj, responsavel, email, telefone, endereco, area_atuacao,
-                                    coordenadas_gps, equipamentos_aceitacao, equipamentos, animais_estimacoes, praia,
-                                    calendario_funcionamento, regras_internas, eletricidade, acessibilidade, comunicacao,
-                                    veiculos_recreacao, trilhas, site_internet, rede_social, imagens)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-
-        const [result] = await pool.execute(sql, [
-            nomeCamping,
-            nomeFantasia,
-            endereco,
-            responsavel,
-            cnpj,
-            email,
-            telefone,
-            areaAtuacao,
-            coordenadasGPS,
-            equipamentosAceitacao,
-            equipamentos,
-            animaisEstimacoes,
-            praia,
-            calendarioFuncionamento,
-            regrasInternas,
-            eletricidade,
-            acessibilidade,
-            comunicacao,
-            veiculosRecreacao,
-            trilhas,
-            siteInternet,
-            redeSocial,
-            imagens.join(',') // Armazena os caminhos das imagens como uma string separada por vírgulas
-        ]);
-
-        res.status(201).json({
-            message: 'Camping cadastrado com sucesso!',
-            id: result.insertId,
-            imagens: imagens
-        });
-    } catch (error) {
-        console.error('Erro ao cadastrar camping:', error);
-        res.status(500).json({
-            message: 'Erro ao cadastrar camping.',
-            error: error.message
-        });
-    }
-});
-
-// Servir arquivos estáticos (as imagens, no caso)
-app.use('/uploads', express.static('uploads'));
-
-// Endpoint de login
-app.post('/api/login', (req, res) => {
+// Rota de login
+app.post('/login', (req, res) => {
     const { email, senha } = req.body;
 
     if (!email || !senha) {
         return res.status(400).json({ success: false, message: "Email e senha são obrigatórios!" });
     }
 
-    // Consultar o banco de dados para verificar as credenciais
-    const query = 'SELECT * FROM Tbl_CadUsuario WHERE ds_email = ? AND ds_senha = ?';
+    // Consulta para verificar o usuário normal
+    const queryUsuario = `SELECT id_usuario, nm_usuario FROM Tbl_CadUsuario WHERE ds_email = ? AND ds_senha = ?`;
 
-    connection.query(query, [email, senha], (err, results) => {
-        if (err) {
-            console.error('Erro ao realizar a consulta no banco de dados:', err);
-            return res.status(500).json({ success: false, message: "Erro ao processar o login." });
-        }
+    // Consulta para verificar a empresa
+    const queryEmpresa = `SELECT id_empresa, nm_empresa FROM Tbl_CadEmpresa WHERE ds_emailempresa = ? AND ds_senhaempresa = ?`;
 
-        if (results.length > 0) {
-            // Credenciais válidas
-            res.json({ success: true, message: "Login bem-sucedido!", user: results[0] });
+    // Verificar se é usuário normal
+    connection.query(queryUsuario, [email, senha], (err, resultUsuario) => {
+        if (err) throw err;
+
+        if (resultUsuario.length > 0) {
+            // Se for um usuário normal
+            const nomedeusuario = resultUsuario[0].nm_usuario;
+            req.session.nome = nomedeusuario;  // Salvar nome na sessão
+            req.session.tipoCadastro = 'normal'; // Tipo de cadastro
+
+            // Envia uma resposta JSON para o frontend
+            return res.json({ success: true, nome: nomedeusuario, tipoCadastro: 'normal' });
         } else {
-            // Credenciais inválidas
-            res.status(401).json({ success: false, message: "Email ou senha inválidos!" });
+            // Verificar se é uma empresa
+            connection.query(queryEmpresa, [email, senha], (err, resultEmpresa) => {
+                if (err) throw err;
+
+                if (resultEmpresa.length > 0) {
+                    // Se for uma empresa
+                    const nomeEmpresa = resultEmpresa[0].nm_empresa;
+                    req.session.nome = nomeEmpresa;  // Salvar nome na sessão
+                    req.session.tipoCadastro = 'empresa'; // Tipo de cadastro
+
+                    // Envia uma resposta JSON para o frontend
+                    return res.json({ success: true, nome: nomeEmpresa, tipoCadastro: 'empresa' });
+                } else {
+                    // Caso o login não seja de nenhum dos dois
+                    return res.json({ success: false, message: 'Email ou senha incorretos!' });
+                }
+            });
         }
-        
-        
     });
 });
 
-// Endpoint para obter dados do usuário ou da empresa
-app.post('/api/obterDadosUsuario', (req, res) => {
-    const { usuarioLogado, tipoCadastro } = req.body;
-
-    if (!usuarioLogado || !tipoCadastro) {
-        return res.status(400).json({ success: false, message: 'Dados insuficientes para buscar informações.' });
-    }
-
-    let query = '';
-    let params = [];
-
-    if (tipoCadastro === 'normal') {
-        // Consulta para obter dados do usuário normal
-        query = 'SELECT * FROM Tbl_CadUsuario WHERE nm_usuario = ?';
-        params = [usuarioLogado];
-    } else if (tipoCadastro === 'empresa') {
-        // Consulta para obter dados da empresa
-        query = 'SELECT * FROM Tbl_CadEmpresa WHERE nm_empresa = ?';
-        params = [usuarioLogado];
+app.get("/", (req, res) => {
+    if (req.session.nome) {
+      res.send(`Bem-vindo, ${req.session.nome}!`);
     } else {
-        return res.status(400).json({ success: false, message: 'Tipo de cadastro inválido.' });
+      res.send('Você precisa fazer login primeiro.');
     }
-
-    // Realiza a consulta no banco de dados
-    connection.query(query, params, (err, results) => {
-        if (err) {
-            console.error('Erro ao consultar o banco de dados:', err);
-            return res.status(500).json({ success: false, message: 'Erro ao buscar os dados.' });
-        }
-
-        if (results.length > 0) {
-            // Retorna os dados encontrados
-            res.json({ success: true, usuario: results[0] });
-        } else {
-            res.status(404).json({ success: false, message: 'Usuário ou empresa não encontrados.' });
-        }
-    });
 });
-
 
 
 // Endpoint de cadastro
@@ -254,17 +210,6 @@ app.post('/api/cadastrar', async (req, res) => {
     }
 });
 
-
-
-
-// Endpoint para verificar se o usuário está logado
-app.get('/api/verificar_usuario', (req, res) => {
-    if (req.session.user) {
-        res.json({ success: true, user: req.session.user });
-    } else {
-        res.json({ success: false });
-    }
-});
 
 // Endpoint para logout
 app.post('/api/sair', (req, res) => {
