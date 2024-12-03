@@ -152,8 +152,50 @@ app.post('/api/login', (req, res) => {
             // Credenciais inválidas
             res.status(401).json({ success: false, message: "Email ou senha inválidos!" });
         }
+        
+        
     });
 });
+
+// Endpoint para obter dados do usuário ou da empresa
+app.post('/api/obterDadosUsuario', (req, res) => {
+    const { usuarioLogado, tipoCadastro } = req.body;
+
+    if (!usuarioLogado || !tipoCadastro) {
+        return res.status(400).json({ success: false, message: 'Dados insuficientes para buscar informações.' });
+    }
+
+    let query = '';
+    let params = [];
+
+    if (tipoCadastro === 'normal') {
+        // Consulta para obter dados do usuário normal
+        query = 'SELECT * FROM Tbl_CadUsuario WHERE nm_usuario = ?';
+        params = [usuarioLogado];
+    } else if (tipoCadastro === 'empresa') {
+        // Consulta para obter dados da empresa
+        query = 'SELECT * FROM Tbl_CadEmpresa WHERE nm_empresa = ?';
+        params = [usuarioLogado];
+    } else {
+        return res.status(400).json({ success: false, message: 'Tipo de cadastro inválido.' });
+    }
+
+    // Realiza a consulta no banco de dados
+    connection.query(query, params, (err, results) => {
+        if (err) {
+            console.error('Erro ao consultar o banco de dados:', err);
+            return res.status(500).json({ success: false, message: 'Erro ao buscar os dados.' });
+        }
+
+        if (results.length > 0) {
+            // Retorna os dados encontrados
+            res.json({ success: true, usuario: results[0] });
+        } else {
+            res.status(404).json({ success: false, message: 'Usuário ou empresa não encontrados.' });
+        }
+    });
+});
+
 
 
 // Endpoint de cadastro
@@ -216,13 +258,13 @@ app.post('/api/cadastrar', async (req, res) => {
 
 
 // Endpoint para verificar se o usuário está logado
-/*app.get('/api/verificar_usuario', (req, res) => {
+app.get('/api/verificar_usuario', (req, res) => {
     if (req.session.user) {
         res.json({ success: true, user: req.session.user });
     } else {
         res.json({ success: false });
     }
-});*/
+});
 
 // Endpoint para logout
 app.post('/api/sair', (req, res) => {
