@@ -47,7 +47,7 @@ document.querySelector('#cadastroEmpresa').addEventListener('submit', async func
                 nomeEmpresa: document.querySelector('#nomeEmpresa').value,
                 cnpj: document.querySelector('#cnpj').value,
                 emailEmpresa: document.querySelector('#emailEmpresa').value,
-                senha: document.querySelector('#senhaEmpresa').value,
+                senhaEmpresa: document.querySelector('#senhaEmpresa').value,
             }),
         });
 

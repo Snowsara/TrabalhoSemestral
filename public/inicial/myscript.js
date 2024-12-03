@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     } else {
         // Exibe o botão de login e cadastro se não houver usuário logado
-        document.getElementById('usernameElement').textContent = 'Anônimo';
+        document.getElementById('usernameElement').textContent = "Anônimo";
         document.getElementById('cadastroBtn').style.display = 'inline-block';
         document.getElementById('loginBtn').style.display = 'inline-block';
         document.getElementById('sairBtn').style.display = 'none';

@@ -12,11 +12,9 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
         email: document.getElementById('email').value,
         endereco: document.getElementById('endereco').value,
         tp_habitacao: document.getElementById('tp_habitacao').value,
-        calendarioFuncionamento: document.getElementById('calendarioFuncionamento').value,
         ds_regras: document.getElementById('ds_regras').value,
-        comunicacao: document.getElementById('comunicacao').value,
         ob_trilha: document.getElementById('ob_trilha').value,
-        redeSocial: document.getElementById('redeSocial').value,
+        redeSocial: document.getElementById('redeSocial').value
     };
 
     if (!campingData.nm_camping) {
@@ -42,9 +40,11 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
     };
 
     try{
-        const response = await fetch ('http://localhost:3003/campings', {
+        const response = await fetch('/campings_cadastrados', {
             method: 'POST',
-            headers: { 'Content-Type': 'applicatiob/json'},
+            headers: { 
+                'Content-Type': 'applicatiob/json'
+            },
             body: JSON.stringify(campingData)
         });
 
@@ -54,7 +54,7 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
 
         const result = await response.json();
         alert('Camping cadastrado com sucesso!');
-        window.location.href = 'campings_cadastrados.html';
+        window.location.href = '/campings_cadastrados';
     } catch (error) {
         console.error('Erro ao salvar o camping:', error);
         alert('Erro ao cadastrar camping.');

@@ -8,7 +8,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     try {
         // Envia os dados de login para a API
-        const response = await fetch('/api/login', {
+        const response = await fetch('/login', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

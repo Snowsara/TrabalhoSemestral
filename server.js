@@ -8,10 +8,9 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
 const connection = require('./db');
-
 const { getSystemErrorMap } = require('util');
 const { error } = require('console');
-
+const session = require('express-session');
 
 const app = express();
 
@@ -72,9 +71,9 @@ app.post('/cadastrar_camping', (req, res) => {
         ob_eletrica} = req.body;
     
     const sql = `INSERT INTO Tbl_Camping (nm_camping, nm_responsavel, nr_telefone,
-    tp_acampamento, ob_animal, ob_eletrica) VALUES (?, ?, ?, ?, ?, ?)`;
+    tp_acampamento, ob_animal, ob_eletrica, ob_trilha, ds_imagem) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
 
-    db.query(sql, [nm_camping, nm_responsavel, nr_telefone,
+    connection.query(sql, [nm_camping, nm_responsavel, nr_telefone,
     tp_acampamento, ob_animal, ob_eletrica], (err, result ) => {
         if(err) {
             res.status(500).send({error: 'Erro ao cadastrar camping'});
@@ -84,10 +83,10 @@ app.post('/cadastrar_camping', (req, res) => {
     });
 });
 
-app.get('/campings', (req, res) => {
+app.get('/campings_cadastrados', (req, res) => {
     const sql = `SELECT * FROM Tbl_Camping`;
 
-    db.query(sql, (err, result) => {
+    connection.query(sql, (err, result) => {
         if(err) {
             res.status(500).send({ error: 'Erro ao buscar campings'});
         }else {
@@ -145,18 +144,18 @@ app.post('/login', (req, res) => {
     });
 });
 
-app.get("/", (req, res) => {
+/*app.get("/", (req, res) => {
     if (req.session.nome) {
       res.send(`Bem-vindo, ${req.session.nome}!`);
     } else {
       res.send('Você precisa fazer login primeiro.');
     }
-});
+});*/
 
 
 // Endpoint de cadastro
 app.post('/api/cadastrar', async (req, res) => {
-    const { nomec, nomedeusuario, email, senha, tipo, nomeEmpresa, cnpj, emailEmpresa } = req.body;
+    const { nomec, nomedeusuario, email, senha, tipo, nomeEmpresa, cnpj, emailEmpresa, senhaEmpresa } = req.body;
 
     // Verifica se é um usuário e valida os campos obrigatórios
     if (tipo === 'usuario' && (!nomec || !nomedeusuario || !email || !senha)) {
@@ -198,7 +197,7 @@ app.post('/api/cadastrar', async (req, res) => {
             `;
 
             // Executa a query para inserir a empresa no banco de dados
-            await connection.promise().query(sqlEmpresa, [nomeEmpresa, emailEmpresa, senha, cnpj]);
+            await connection.promise().query(sqlEmpresa, [nomeEmpresa, cnpj, emailEmpresa, senhaEmpresa]);
 
             // Retorna a resposta de sucesso com a empresa cadastrada
             res.json({ success: true, message: 'Cadastro de empresa realizado com sucesso!' });
