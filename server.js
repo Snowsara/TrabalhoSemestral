@@ -8,8 +8,6 @@ const bodyParser = require('body-parser');
 const helmet = require('helmet'); // Adicione o Helmet para ajudar com o CSP
 const port = 3003;
 const connection = require('./db');
-const { getSystemErrorMap } = require('util');
-const { error } = require('console');
 const session = require('express-session');
 
 const app = express();
@@ -28,21 +26,25 @@ app.use(session({
 
 // Configuração do Multer para upload de imagens
 const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
+    destination: (req, file, cb) => {
         cb(null, 'uploads/'); // Pasta onde as imagens serão salvas
     },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + path.extname(file.originalname)); // Nome da imagem
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname); // Nome da imagem com timestamp
     }
 });
 
+// Filtro para garantir que apenas imagens sejam aceitas
+const fileFilter = (req, file, cb) => {
+    if (file.mimetype.startsWith('image/')) {
+        cb(null, true); // Aceita o arquivo se for uma imagem
+    } else {
+        cb(new Error('Tipo de arquivo não permitido. Por favor, envie uma imagem.'), false); // Rejeita o arquivo se não for uma imagem
+    }
+};
 
-
-const uploads = multer({ storage: storage });
-app.use(express.static(path.join(__dirname, 'public')));
-
-
-
+// Configura o multer com o filtro
+const uploads = multer({ storage, fileFilter });
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "inicial", "index.html"));
@@ -57,7 +59,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/cadastro_camping", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "cadastro_camping", "cadastro_camping.html"));
+    res.sendFile(path.join(__dirname, "public", "cadastro_camping", "cadastrocamp.html"));
 });
 
 app.get("/campings_cadastrados", (req, res) => {
@@ -66,30 +68,55 @@ app.get("/campings_cadastrados", (req, res) => {
 
 
 // Endpoint para cadastrar camping
-app.post('/cadastrar_camping', (req, res) => {
-    const { nm_camping, nm_responsavel, nr_telefone, tp_acampamento, ob_animal,
-        ob_eletrica} = req.body;
-    
-    const sql = `INSERT INTO Tbl_Camping (nm_camping, nm_responsavel, nr_telefone,
-    tp_acampamento, ob_animal, ob_eletrica, ob_trilha, ds_imagem) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+app.post('/cadastro_camping', uploads.single('ds_imagem'), (req, res) => {
+    const { nm_camping, nm_responsavel, nr_telefone, tp_acampamento,
+            ob_animal, ob_eletrica, ob_trilha, nm_cidade, sg_estado, nr_cep } = req.body;
 
-    connection.query(sql, [nm_camping, nm_responsavel, nr_telefone,
-    tp_acampamento, ob_animal, ob_eletrica], (err, result ) => {
-        if(err) {
-            res.status(500).send({error: 'Erro ao cadastrar camping'});
-        }else{
-            res.status({ message: 'Camping cadastrado com sucesso!' });
+    // Verificar se a imagem foi enviada
+    const ds_imagem = req.file ? req.file.filename : null;
+
+    // Verificação dos campos obrigatórios
+    if (!nm_camping || !nm_responsavel || !nr_telefone || !ds_imagem || !nm_cidade || !sg_estado || !nr_cep) {
+        return res.status(400).send({ error: 'Campos obrigatórios não preenchidos.' });
+    }
+
+    // Inserir o endereço
+    const sqlEndereco = `INSERT INTO Tbl_CampLocalizacao (nm_cidade, sg_estado, nr_cep)
+                         VALUES (?, ?, ?)`;
+
+    connection.query(sqlEndereco, [nm_cidade, sg_estado, nr_cep], (err, resultEndereco) => {
+        if (err) {
+            return res.status(500).send({ error: 'Erro ao cadastrar o endereço' });
         }
+
+        const id_endereco = resultEndereco.insertId; // Recupera o id do endereço inserido
+
+        // Inserir o camping
+        const sqlCamping = `INSERT INTO Tbl_Camping (nm_camping, nm_responsavel, nr_telefone,
+                                                      tp_acampamento, ob_animal, ob_eletrica, 
+                                                      ob_trilha, ds_imagem, id_endereco) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+
+        connection.query(sqlCamping, [nm_camping, nm_responsavel, nr_telefone, tp_acampamento, 
+                                      ob_animal, ob_eletrica, ob_trilha, ds_imagem, id_endereco], (err, resultCamping) => {
+            if (err) {
+                return res.status(500).send({ error: 'Erro ao cadastrar camping' });
+            }
+            res.status(200).json({ message: 'Camping cadastrado com sucesso!' });
+        });
     });
 });
 
-app.get('/campings_cadastrados', (req, res) => {
+
+
+// Endpoint para buscar os campings cadastrados
+app.get('/api/campings_cadastrados', (req, res) => {
     const sql = `SELECT * FROM Tbl_Camping`;
 
     connection.query(sql, (err, result) => {
         if(err) {
-            res.status(500).send({ error: 'Erro ao buscar campings'});
-        }else {
+            res.status(500).send({ error: 'Erro ao buscar campings' });
+        } else {
             res.send(result);
         }
     });

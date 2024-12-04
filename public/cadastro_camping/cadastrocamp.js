@@ -1,63 +1,77 @@
 
-document.getElementById('formCadastro').addEventListener('submit', async function (event) {
-    event.preventDefault(); // Impede o envio do formulário padrão
-    
-    const campingData ={
-        nm_camping: document.getElementById('nm_camping').value,
-        nm_responsavel: document.getElementById('nm_responsavel').value,
-        nr_telefone: document.getElementById('nr_telefone').value,
-        tp_acampamento: document.getElementById('tp_acampamento').value,
-        ob_animal: document.getElementById('ob_animal').value,
-        ob_eletrica: document.getElementById('ob_eletrica').value,
-        email: document.getElementById('email').value,
-        endereco: document.getElementById('endereco').value,
-        tp_habitacao: document.getElementById('tp_habitacao').value,
-        ds_regras: document.getElementById('ds_regras').value,
-        ob_trilha: document.getElementById('ob_trilha').value,
-        redeSocial: document.getElementById('redeSocial').value
-    };
+document.getElementById('formCadastro').addEventListener('submit', async function(event) {
+    event.preventDefault(); // Impede o comportamento padrão de envio do formulário
 
-    if (!campingData.nm_camping) {
+    const nm_camping = document.getElementById('nm_camping').value;
+    const nm_responsavel = document.getElementById('nm_responsavel').value;
+    const nr_telefone = document.getElementById('nr_telefone').value;
+    const tp_acampamento = document.getElementById('tp_acampamento').value;
+    const ob_animal = document.getElementById('ob_animal').value;
+    const ob_eletrica = document.getElementById('ob_eletrica').value;
+    const ob_trilha = document.getElementById('ob_trilha').value;
+    const ds_imagem = document.getElementById('ds_imagem').files[0]; // Captura a imagem selecionada
+
+    //Captura os dados do endereço
+    const nm_cidade = document.getElementById('nm_cidade').value;
+    const sg_estado = document.getElementById('sg_estado').value;
+    const nr_cep = document.getElementById('nr_cep');
+
+    // Verifica se uma imagem foi selecionada
+    if (!ds_imagem) {
+        alert('Por favor, selecione uma imagem.');
+        return;
+    }
+
+    // Validação do nome do camping
+    if (!nm_camping) {
         alert("O nome do camping é obrigatório.");
         return;
-    };
+    }
 
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    if (!emailRegex.test(campingData.email)) {
-        alert("Por favor, insira um e-mail válido.");
-        return;
-    };
-
+    // Validação do número de telefone (caso o formato seja fixo como o exemplo)
     const nr_telefoneRegex = /^\(\d{2}\)\s\d{5}-\d{4}$/;
-    if (!nr_telefoneRegex.test(campingData.nr_telefone)) {
+    if (!nr_telefoneRegex.test(nr_telefone)) {
         alert("Por favor, insira um telefone válido.");
         return;
-    };
-
-    if (!campingData.endereco) {
-        alert("O endereço é obrigatório.");
+    }
+    
+    if (!nm_cidade || !sg_estado || !nr_cep ) {
+        alert("Por favor, preencha todos os campos de endereço.");
         return;
-    };
+    }
 
-    try{
-        const response = await fetch('/campings_cadastrados', {
+    // Cria um objeto FormData para enviar os dados
+    const formData = new FormData();
+    formData.append('nm_camping', nm_camping);
+    formData.append('nm_responsavel', nm_responsavel);
+    formData.append('nr_telefone', nr_telefone);
+    formData.append('tp_acampamento', tp_acampamento);
+    formData.append('ob_animal', ob_animal);
+    formData.append('ob_eletrica', ob_eletrica);
+    formData.append('ob_trilha', ob_trilha);
+    formData.append('ds_imagem', ds_imagem);
+    formData.append('nm_cidade', nm_cidade);
+    formData.append('sg_estado', sg_estado);
+    formData.append('nr_cep', nr_cep);
+
+    // Envia os dados via POST para o backend
+    try {
+        const response = await fetch('http://localhost:3003/cadastro_camping', {
             method: 'POST',
-            headers: { 
-                'Content-Type': 'applicatiob/json'
-            },
-            body: JSON.stringify(campingData)
+            body: formData,
         });
 
-        if (!response.ok){
-            throw new Error('Erro ao cadastrar o camping');
-        }
+        const data = await response.json();
 
-        const result = await response.json();
-        alert('Camping cadastrado com sucesso!');
-        window.location.href = '/campings_cadastrados';
+        if (data.success) {
+            alert('Camping cadastrado com sucesso!');
+            // Redireciona para a página de campings cadastrados
+            window.location.href = 'campings_cadastrados.html';
+        } else {
+            alert('Erro ao cadastrar camping: ' + data.message);
+        }
     } catch (error) {
-        console.error('Erro ao salvar o camping:', error);
-        alert('Erro ao cadastrar camping.');
+        console.error('Erro ao cadastrar o camping:', error);
+        alert('Erro ao cadastrar o camping.');
     }
 });
-

@@ -35,18 +35,23 @@
                     </div>
 
                     <div class="input-field">
-                        <p for="email">Email</p>
-                        <input type="email" placeholder="Digite e-mail do camping" id="email" name="email" required>
-                    </div>
-
-                    <div class="input-field">
                         <p for="nr_telefone">Telefone</p>
                         <input type="tel" placeholder="Digite o telefone do camping" id="nr_telefone" name="nr_telefone" required>
                     </div>
-        
+
                     <div class="input-field">
-                        <p for="endereco">Endereço</p>
-                        <input type="text" placeholder="Digite o endereço do camping" id="endereco" name="endereco" required>
+                        <p for="nm_cidade"> Cidade </p>
+                        <input type="text" placeholder="Digite o nome da cidade onde fica o camping" id="nm_cidade" name="nm_cidade" required>
+                    </div>
+
+                    <div class="input-field">
+                        <p for="sg_estado"> Sigla do estado </p>
+                        <input type="text" placeholder="Digite a sigla do estado" id="sg_estado" name="sg_estado" required>
+                    </div>
+
+                    <div class="input-field">
+                        <p for="nr_cep"> CEP </p>
+                        <input type="text" placeholder="Digite o CEP da cidade" id="nr_cep" name="nr_cep" required>
                     </div>
 
                     <div class="input-field">
@@ -80,39 +85,12 @@
                     </div>
 
                     <div class="input-field">
-                        <p for="redeSocial"> Endereço de Rede Social </p>
-                        <input type="text" placeholder="Possui instagram ou facebook" id="redeSocial" name="redeSocial">
-                    </div>
-
-
-
-                    <div class="input-field">
-                        <label for="imageUpload">Selecione uma imagem do Camping:</label><br>
-                        <input type="file" id="imageUpload" name="imagens" multiple accept="image/*"><br><br>
+                        <label for="ds_imagem" class="form-label">Imagem do camping</label>
+                        <input type="file" id="ds_imagem" name="ds_imagem" accept="image/*"><br><br>
                         <div id="imagePreview"></div>
-                        
                     </div>
                     
                     <div id="mensagemErro"></div>
-
-                    <!--
-                     <div class="input-field">
-                        <p>Avaliação dos usuario</p>
-                          
-                        <label for="rating">Classificação (1 a 5):</label>
-                        <select id="rating" name="rating">
-                          <option value="1">1 - Péssimo ⭐</option>
-                          <option value="2">2 - Ruim ⭐⭐</option>
-                          <option value="3">3 - Regular ⭐⭐⭐</option>
-                          <option value="4">4 - Bom ⭐⭐⭐⭐</option>
-                          <option value="5">5 - Excelente ⭐⭐⭐⭐⭐</option>
-                        </select><br><br>
-                          
-                        <label for="comments">Comentário:</label><br>
-                        <textarea id="comments" name="comments" rows="4" cols="50" placeholder="Deixe sua opinião sobre o camping..."></textarea><br><br>   
-                    </div>
-
-                    -->
                    
                 </div>
     
@@ -126,6 +104,6 @@
         
     </div>
     
-    <script src='/cadastro_camping/cadastrocamp.js'></script>
+    <script src='../cadastro_camping/cadastrocamp.js'></script>
 </body>
 </html>

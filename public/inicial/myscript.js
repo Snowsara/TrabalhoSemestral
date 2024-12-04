@@ -32,4 +32,4 @@ document.addEventListener('DOMContentLoaded', function () {
         localStorage.removeItem('tipoCadastro'); // Remove também o tipo de usuário
         window.location.reload();
     };
-})
+});

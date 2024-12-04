@@ -1,36 +1,37 @@
 
 let campings = [];
+
 async function carregarCampings() {
     try {
-      const response = await fetch('http://localhost:3003/campings');
-      if (!response.ok) {
-        throw new Error('Erro ao buscar campings.');
-    }
-  
-    const campings = await response.json();
-    const campingList = document.getElementById('campingList');
-    campingList.innerHTML = ''; // Limpa a lista antes de adicionar novos campings
-  
-    if (campings.length === 0) {
-        campingList.innerHTML = '<p>Nenhum camping cadastrado.</p>';
-        return;
-    }
-  
-    campings.forEach(camping => {
-        const cardCamping = criarCardCamping(camping); // Criando o card para cada camping
-        campingList.appendChild(cardCamping); // Adicionando o card à lista
-    });
+        const response = await fetch('/campings_cadastrados');
+        if (!response.ok) {
+            throw new Error('Erro ao buscar campings.');
+        }
 
-    //Armazenar os campings no localStorage para possível uso offline
-    localStorage.setItem('campings', JSON.stringify(campings));
+        campings = await response.json();  // Corrigido para usar a variável global
+        const campingList = document.getElementById('campingList');
+        campingList.innerHTML = ''; // Limpa a lista antes de adicionar novos campings
+
+        if (campings.length === 0) {
+            campingList.innerHTML = '<p>Nenhum camping cadastrado.</p>';
+            return;
+        }
+
+        campings.forEach(camping => {
+            const cardCamping = criarCardCamping(camping); // Criando o card para cada camping
+            campingList.appendChild(cardCamping); // Adicionando o card à lista
+        });
+
+        // Armazenar os campings no localStorage para possível uso offline
+        localStorage.setItem('campings', JSON.stringify(campings));
 
     } catch (error) {
-      console.error('Erro ao carregar os campings:', error);
-      const campingList = document.getElementById('campingList');
-      campingList.innerHTML = '<p>Erro ao carregar os campings.</p>';
+        console.error('Erro ao carregar os campings:', error);
+        const campingList = document.getElementById('campingList');
+        campingList.innerHTML = '<p>Erro ao carregar os campings.</p>';
     }
 }
-  
+
 // Função para criar os cards dinamicamente
 function criarCardCamping(camping) {
     const col = document.createElement('div');
@@ -50,12 +51,12 @@ function criarCardCamping(camping) {
     cardBody.appendChild(title);
 
     // Adiciona as imagens, se existirem
-    if (camping.imagens && camping.imagens.length > 0) {
+    if (camping.ds_imagem && camping.ds_imagem.length > 0) {
         const imageContainer = document.createElement('div');
         imageContainer.classList.add('image-container');
-        camping.imagens.forEach(imageUrl => {
+        camping.ds_imagem.forEach(imageUrl => {
             const img = document.createElement('img');
-            img.src = `http://localhost:3003${imageUrl}`;  // Corrija a URL conforme necessário
+            img.src = `http://localhost:3003/uploads/${imageUrl}`;  // Corrigido para o caminho da imagem
             img.alt = `Imagem de ${camping.nm_camping}`;
             img.style.width = '150px';
             img.style.margin = '10px';
@@ -86,10 +87,9 @@ function criarCardCamping(camping) {
     return col;
 }
 
-
 // Função para excluir um camping
 function excluirCamping(id) {
-    fetch(`http://localhost:3003/campings/${id}`, {
+    fetch(`http://localhost:3003/campings_cadastrados/${id}`, {
         method: 'DELETE',
     })
     .then(response => response.json())
@@ -112,7 +112,6 @@ function excluirCamping(id) {
     });
 }
 
-
 // Função para mostrar os detalhes de um camping
 function mostrarDetalhesCamping(camping) {
     const modalTitle = document.getElementById('campingModalLabel');
@@ -122,29 +121,27 @@ function mostrarDetalhesCamping(camping) {
     modalTitle.textContent = camping.nm_camping;
     modalBody.innerHTML = `
         <p><strong>Nome do Responsável:</strong> ${camping.nm_responsavel || 'Não informado'}</p>
-        <p><strong>Email:</strong> ${camping.email || 'Não informado'}</p>
         <p><strong>Telefone:</strong> ${camping.nr_telefone || 'Não informado'}</p>
-        <p><strong>Endereço:</strong> ${camping.endereco || 'Não informado'}</p>
+        <p><strong>Cidade:</strong> ${camping.nm_cidade || 'Não informado'}</p>
+        <p><strong>Sigla do estado:</strong> ${camping.sg_estado || 'Não informado'}</p>
+        <p><strong>CEP:</strong> ${camping.nr_cep || 'Não informado'}</p>
         <p><strong>Tipo de acampamento:</strong> ${camping.tp_acampamento || 'Não informado'}</p>
         <p><strong>Tipo de habitação:</strong> ${camping.tp_habitacao || 'Não informado'}</p>
         <p><strong>Animais de estimação:</strong> ${camping.ob_animais || 'Não informado'}</p>
-        <p><strong>Calendário de funcionamento:</strong> ${camping.calendarioFuncionamento || 'Não informado'}</p>
         <p><strong>Regras do camping:</strong> ${camping.ds_regras || 'Não informado'}</p>
         <p><strong>Disponibilidade de Eletricidade:</strong> ${camping.ob_eletrica || 'Não informado'}</p>
-        <p><strong>Disponibilidade de comunicação:</strong> ${camping.comunicacao || 'Não informado'}</p>
         <p><strong>Trilhas:</strong> ${camping.ob_trilha || 'Não informado'}</p>
-        <p><strong>Endereço de Rede Social:</strong> ${camping.redeSocial || 'Não informado'}</p>
     `;
 
     // Se o camping tiver imagens adicionais, mostrar no modal
-    if (campings.images && campings.images.length > 0) {
+    if (camping.images && camping.images.length > 0) {
         const imageGallery = document.createElement('div');
         imageGallery.classList.add('image-gallery');
 
-        campings.images.forEach(imageUrl => {
+        camping.images.forEach(imageUrl => {
             const img = document.createElement('img');
-            img.src = `http://localhost:3003${imageUrl}`;
-            img.alt = `Imagem de ${camping.nomeCamping}`;
+            img.src = `http://localhost:3003/uploads/${imageUrl}`;
+            img.alt = `Imagem de ${camping.nm_camping}`;
             img.classList.add('modal-image');
             imageGallery.appendChild(img);
         });
@@ -161,6 +158,3 @@ function mostrarDetalhesCamping(camping) {
 window.onload = function() {
     carregarCampings(); // Carrega os campings do servidor
 };
-
-
-
