@@ -56,11 +56,11 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
 
     // Envia os dados via POST para o backend
     try {
-        const response = await fetch('http://localhost:3003/cadastro_camping', {
+        const response = await fetch('http://localhost:3003/api/cadastro_camping', {
             method: 'POST',
             body: formData,
         });
-
+        
         if (response.ok){
             const data = await response.json();
 
@@ -74,6 +74,7 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
         }else{
             alert('Erro ao conectar ao servidor. Status:' + response.status);
         }
+
     } catch (error) {
         console.error('Erro ao cadastrar o camping:', error);
         alert('Erro ao cadastrar o camping.');

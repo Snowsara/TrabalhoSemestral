@@ -89,7 +89,7 @@ function criarCardCamping(camping) {
 
 // Função para excluir um camping
 function excluirCamping(id) {
-    fetch(`http://localhost:3003/campings_cadastrados/${id}`, {
+    fetch(`http://localhost:3003/api/campings_cadastrados/${id}`, {
         method: 'DELETE',
     })
     .then(response => response.json())

@@ -24,6 +24,7 @@ app.use(session({
     saveUninitialized: true
 }));
 
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Configuração do Multer para upload de imagens
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -68,11 +69,10 @@ app.get("/campings_cadastrados", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "campings_cadastrados", "campings_cadastrados.html"));
 });
 
-
-// Endpoint para cadastrar camping
-app.post('/cadastro_camping', uploads.single('ds_imagem'), (req, res) => {
+//Endpoint para cadastro de camping
+app.post('/api/cadastro_camping', uploads.single('ds_imagem'), async (req, res) => {
     const { nm_camping, nm_responsavel, nr_telefone, tp_acampamento,
-            ob_animal, ob_eletrica, ob_trilha, nm_cidade, sg_estado, nr_cep } = req.body;
+            ob_animal, ob_eletrica, ob_trilha, nm_cidade, sg_estado, nr_cep, id_empresa } = req.body;
 
     // Verificar se a imagem foi enviada
     const ds_imagem = req.file ? req.file.filename : null;
@@ -82,45 +82,51 @@ app.post('/cadastro_camping', uploads.single('ds_imagem'), (req, res) => {
         return res.status(400).send({ error: 'Campos obrigatórios não preenchidos.' });
     }
 
-    // Inserir o endereço
-    const sqlEndereco = `INSERT INTO Tbl_CampLocalizacao (nm_cidade, sg_estado, nr_cep)
-                         VALUES (?, ?, ?)`;
+    try {
+        // Inserir endereço no banco de dados
+        const sqlEndereco = `
+            INSERT INTO Tbl_CampLocalizacao (nm_cidade, sg_estado, nr_cep)
+            VALUES (?, ?, ?);
+        `;
 
-    connection.query(sqlEndereco, [nm_cidade, sg_estado, nr_cep], (err, resultEndereco) => {
-        if (err) {
-            return res.status(500).send({ error: 'Erro ao cadastrar o endereço' });
-        }
+        // Executar a query de inserção do endereço e obter o ID gerado
+        const [resultEndereco] = await connection.promise().query(sqlEndereco, [nm_cidade, sg_estado, nr_cep]);
+        const id_endereco = resultEndereco.insertId; // Obter o ID do endereço inserido
 
-        const id_endereco = resultEndereco.insertId; // Recupera o id do endereço inserido
+        // Inserir camping no banco de dados
+        const sqlCamping = `
+            INSERT INTO Tbl_Camping (nm_camping, nm_responsavel, nr_telefone, tp_acampamento,
+                                     ob_animal, ob_eletrica, ob_trilha, ds_imagem, id_endereco, id_empresa) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);
+        `;
 
-        // Inserir o camping
-        const sqlCamping = `INSERT INTO Tbl_Camping (nm_camping, nm_responsavel, nr_telefone,
-                                                      tp_acampamento, ob_animal, ob_eletrica, 
-                                                      ob_trilha, ds_imagem, id_endereco) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+        // Executar a query de inserção do camping
+        await connection.promise().query(sqlCamping, [
+            nm_camping, nm_responsavel, nr_telefone, tp_acampamento, 
+            ob_animal, ob_eletrica, ob_trilha, ds_imagem, id_endereco, id_empresa
+        ]);
 
-        connection.query(sqlCamping, [nm_camping, nm_responsavel, nr_telefone, tp_acampamento, 
-                                      ob_animal, ob_eletrica, ob_trilha, ds_imagem, id_endereco], (err, resultCamping) => {
-            if (err) {
-                return res.status(500).send({ error: 'Erro ao cadastrar camping' });
-            }
-            res.status(200).json({ message: 'Camping cadastrado com sucesso!' });
-        });
-    });
+        // Retornar sucesso
+        res.json({ success: true, message: 'Camping cadastrado com sucesso!' });
+
+    } catch (error) {
+        console.error("Erro ao realizar cadastro", error);
+        res.status(500).json({ success: false, message: "Erro ao realizar cadastro: " + error.message });
+    }
 });
 
 
 // Endpoint para buscar os campings cadastrados
-app.get('/api/campings_cadastrados', (req, res) => {
+app.get('/api/campings_cadastrados', async (req, res) => {
     const sql = `SELECT * FROM Tbl_Camping`;
 
-    connection.query(sql, (err, result) => {
-        if(err) {
-            res.status(500).send({ error: 'Erro ao buscar campings' });
-        } else {
-            res.send(result);
-        }
-    });
+    try {
+        // Usando a versão promise do mysql2
+        const [result] = await connection.promise().query(sql);
+        res.send(result);
+    } catch (err) {
+        res.status(500).send({ error: 'Erro ao buscar campings' });
+    }
 });
 
 
@@ -171,14 +177,6 @@ app.post('/login', (req, res) => {
         }
     });
 });
-
-/*app.get("/", (req, res) => {
-    if (req.session.nome) {
-      res.send(`Bem-vindo, ${req.session.nome}!`);
-    } else {
-      res.send('Você precisa fazer login primeiro.');
-    }
-});*/
 
 
 // Endpoint de cadastro
@@ -247,6 +245,22 @@ app.post('/api/sair', (req, res) => {
         res.json({ success: true });
     });
 });
+
+app.delete('/api/campings_cadastrados/:id', async (req, res) => {
+    const { id } = req.params;
+
+    try {
+        const result = await connection.promise().query('DELETE FROM Tbl_Camping WHERE id = ?', [id]);
+        if (result.affectedRows === 0) {
+            return res.status(404).send({ success: false, message: 'Camping não encontrado.' });
+        }
+        res.send({ success: true, message: 'Camping excluído com sucesso.' });
+    } catch (err) {
+        console.error('Erro ao excluir camping:', err);
+        res.status(500).send({ success: false, message: 'Erro ao excluir o camping.' });
+    }
+});
+
 
 
 // Inicializa o servidor

@@ -9,7 +9,9 @@ body {
 
 h1 {
     text-align: center;
-    color: #000000;
+    color: #023f0c;
+
+    border-radius: 10px; /* Bordas arredondadas */
     margin-bottom: 40px;
 
 }

@@ -6,7 +6,7 @@ const connection = db.createConnection({
   port: 3306,
   user: 'root',
   password: '',  
-  database: 'DB_CAMPING', 
+  database: 'db_Camping', 
 });
 
 // Conectar ao banco de dados
