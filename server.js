@@ -46,6 +46,8 @@ const fileFilter = (req, file, cb) => {
 // Configura o multer com o filtro
 const uploads = multer({ storage, fileFilter });
 
+app.use(express.static('public'));
+
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "inicial", "index.html"));
 });
@@ -106,7 +108,6 @@ app.post('/cadastro_camping', uploads.single('ds_imagem'), (req, res) => {
         });
     });
 });
-
 
 
 // Endpoint para buscar os campings cadastrados

@@ -3,7 +3,7 @@ let campings = [];
 
 async function carregarCampings() {
     try {
-        const response = await fetch('/campings_cadastrados');
+        const response = await fetch('/api/campings_cadastrados');
         if (!response.ok) {
             throw new Error('Erro ao buscar campings.');
         }

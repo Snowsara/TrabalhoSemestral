@@ -14,7 +14,7 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
     //Captura os dados do endereço
     const nm_cidade = document.getElementById('nm_cidade').value;
     const sg_estado = document.getElementById('sg_estado').value;
-    const nr_cep = document.getElementById('nr_cep');
+    const nr_cep = document.getElementById('nr_cep').value;
 
     // Verifica se uma imagem foi selecionada
     if (!ds_imagem) {
@@ -61,17 +61,22 @@ document.getElementById('formCadastro').addEventListener('submit', async functio
             body: formData,
         });
 
-        const data = await response.json();
+        if (response.ok){
+            const data = await response.json();
 
         if (data.success) {
             alert('Camping cadastrado com sucesso!');
             // Redireciona para a página de campings cadastrados
-            window.location.href = 'campings_cadastrados.html';
+            window.location.href = '/campings_cadastrados';
         } else {
             alert('Erro ao cadastrar camping: ' + data.message);
+        }
+        }else{
+            alert('Erro ao conectar ao servidor. Status:' + response.status);
         }
     } catch (error) {
         console.error('Erro ao cadastrar o camping:', error);
         alert('Erro ao cadastrar o camping.');
     }
+
 });
